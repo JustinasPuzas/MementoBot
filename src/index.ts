@@ -17,5 +17,5 @@ const intents = [
   GatewayIntentBits.GuildWebhooks,
 ];
 
-const riotClient = new RiotClient({ key: process.env.RIOT_API_KEY });
-const client = new Client({ intents }, riotClient);
+//const riotClient = new RiotClient({ key: process.env.RIOT_API_KEY });
+const client = new Client({ intents });

@@ -8,26 +8,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const User_1 = __importDefault(require("../dataBase/schemas/User"));
-class PingCommand {
+class LeaguePing {
     constructor() {
-        this.name = "ping";
-        this.description = "Replies with Pong!";
-        this.template = {
-            name: this.name,
-            description: this.description,
-        };
+        this.name = "League Ping";
+        this.description = "Ping League of Legends servers";
+        this.online = false;
+        this.online = true;
     }
-    execute(interaction, client) {
+    execute(message, client) {
         return __awaiter(this, void 0, void 0, function* () {
-            const usr = yield User_1.default.findOne({ discordId: interaction.user.id });
-            yield interaction.reply(`ss`);
-            return;
+            if (message.content.trim() === "<@&379054265508823061>") {
+                message.channel.send("<:0_:406198795404181504>");
+            }
         });
     }
 }
-exports.default = PingCommand;
+exports.default = LeaguePing;

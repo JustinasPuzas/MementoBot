@@ -77,12 +77,32 @@ class Client extends discord_js_1.Client {
             }
             return { cmds, cmdsTmpl };
         });
-        this.riotClient = riotClient;
+        this.fetchServices = () => __awaiter(this, void 0, void 0, function* () {
+            const services = new Map();
+            const servicesFiles = yield promises_1.default.readdir(__dirname + "/services");
+            for (let service of servicesFiles) {
+                const serviceClass = yield Promise.resolve().then(() => __importStar(require(`${__dirname}/services/${service}`)));
+                const serviceInstance = new serviceClass.default();
+                services.set(serviceInstance.name, serviceInstance);
+            }
+            return services;
+        });
         this.on("ready", () => __awaiter(this, void 0, void 0, function* () {
             yield this.connectToMongoDB();
             const { cmds, cmdsTmpl } = yield this.fetchCommands();
             this.commands = cmds;
+            console.log("Commands loaded:", this.commands);
             yield this.refreshDiscordApplicationCommands(cmdsTmpl);
+            console.log("Command temoplates loaded:", this.commandTemplates);
+            this.services = yield this.fetchServices();
+            console.log("Services loaded:", this.services);
+        }));
+        this.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
+            if (message.author.bot)
+                return;
+            this.services.forEach((service) => __awaiter(this, void 0, void 0, function* () {
+                yield service.execute(message, this);
+            }));
         }));
         this.on("interactionCreate", (interaction) => __awaiter(this, void 0, void 0, function* () {
             var _a;

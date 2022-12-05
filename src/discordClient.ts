@@ -11,22 +11,37 @@ import PingCommand from "./commands/ping";
 import fs from "fs/promises";
 import { Command } from "./commands/helpers/interfaces";
 import RiotClient from "./leagueClient";
+import { Service } from "./services/helpers/interfaces";
 
 export default class Client extends DiscordClient {
   public commands!: Map<string, Command>;
   public commandTemplates!: any[];
+  public services!: Map<string, Service>;
   public riotClient?: RiotClient;
 
-  constructor(options: ClientOptions, riotClient: RiotClient) {
+  constructor(options: ClientOptions, riotClient?: RiotClient) {
     super(options);
-    this.riotClient = riotClient;
 
     this.on("ready", async () => {
       await this.connectToMongoDB();
+
       const { cmds, cmdsTmpl } = await this.fetchCommands();
       this.commands = cmds;
+      console.log("Commands loaded:", this.commands);
+
       await this.refreshDiscordApplicationCommands(cmdsTmpl);
+      console.log("Command temoplates loaded:", this.commandTemplates);
+
+      this.services = await this.fetchServices();
+      console.log("Services loaded:", this.services);
     });
+
+    this.on("messageCreate", async (message) => {
+      if (message.author.bot) return;
+      this.services.forEach(async (service) => {
+        await service.execute(message, this);
+      })
+    })
 
     this.on("interactionCreate", async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
@@ -86,4 +101,17 @@ export default class Client extends DiscordClient {
 
     return { cmds, cmdsTmpl };
   };
+
+  private fetchServices = async () => {
+    const services: Map<string, Service> = new Map();
+
+    const servicesFiles = await fs.readdir(__dirname + "/services");
+    for (let service of servicesFiles) {
+      const serviceClass = await import(`${__dirname}/services/${service}`);
+      const serviceInstance: Service = new serviceClass.default();
+      services.set(serviceInstance.name, serviceInstance);
+    }
+
+    return services;
+  }
 }

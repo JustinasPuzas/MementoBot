@@ -25,7 +25,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const dotenv = __importStar(require("dotenv"));
 const discordClient_1 = __importDefault(require("./discordClient"));
-const leagueClient_1 = __importDefault(require("./leagueClient"));
 dotenv.config();
 // discord intents
 const intents = [
@@ -37,5 +36,5 @@ const intents = [
     discord_js_1.GatewayIntentBits.GuildMembers,
     discord_js_1.GatewayIntentBits.GuildWebhooks,
 ];
-const riotClient = new leagueClient_1.default({ key: process.env.RIOT_API_KEY });
-const client = new discordClient_1.default({ intents }, riotClient);
+//const riotClient = new RiotClient({ key: process.env.RIOT_API_KEY });
+const client = new discordClient_1.default({ intents });

@@ -12,10 +12,8 @@ class PingCommand implements Command {
   };
 
   async execute(interaction: CommandInteraction, client: Client) {
-    const summoner = await client.riotClient?.getUser("IGORIS");
     const usr = await UserDb.findOne({discordId: interaction.user.id})
-    console.log(summoner)
-    await interaction.reply(`${summoner}`);
+    await interaction.reply(`ss`);
     return;
   }
 }
