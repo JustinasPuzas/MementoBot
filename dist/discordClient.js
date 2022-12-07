@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -37,6 +41,7 @@ const promises_1 = __importDefault(require("fs/promises"));
 class Client extends discord_js_1.Client {
     constructor(options, riotClient) {
         super(options);
+        this.interactions = new Map();
         // connect to MongoDB
         this.connectToMongoDB = () => __awaiter(this, void 0, void 0, function* () {
             try {
@@ -64,11 +69,12 @@ class Client extends discord_js_1.Client {
         });
         // fetch commands from commands folder
         this.fetchCommands = () => __awaiter(this, void 0, void 0, function* () {
+            var _a;
             const cmds = new Map();
             const cmdsTmpl = [];
             const commandFiles = yield promises_1.default.readdir(__dirname + "/commands");
             for (let commandFile of commandFiles) {
-                const command = yield Promise.resolve().then(() => __importStar(require(`${__dirname}/commands/${commandFile}`)));
+                const command = yield (_a = `${__dirname}/commands/${commandFile}`, Promise.resolve().then(() => __importStar(require(_a))));
                 const cmd = new command.default();
                 cmds.set(cmd.name, cmd);
                 console.log(cmd.template);
@@ -78,11 +84,12 @@ class Client extends discord_js_1.Client {
             return { cmds, cmdsTmpl };
         });
         this.fetchServices = () => __awaiter(this, void 0, void 0, function* () {
+            var _b;
             const services = new Map();
             const servicesFiles = yield promises_1.default.readdir(__dirname + "/services");
             for (let service of servicesFiles) {
-                const serviceClass = yield Promise.resolve().then(() => __importStar(require(`${__dirname}/services/${service}`)));
-                const serviceInstance = new serviceClass.default();
+                const serviceClass = yield (_b = `${__dirname}/services/${service}`, Promise.resolve().then(() => __importStar(require(_b))));
+                const serviceInstance = new serviceClass.default(this);
                 services.set(serviceInstance.name, serviceInstance);
             }
             return services;
@@ -105,11 +112,16 @@ class Client extends discord_js_1.Client {
             }));
         }));
         this.on("interactionCreate", (interaction) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            if (!interaction.isChatInputCommand())
+            var _c, _d;
+            if (interaction.isChatInputCommand()) {
+                yield ((_c = this.commands
+                    .get(interaction.commandName)) === null || _c === void 0 ? void 0 : _c.execute(interaction, this));
                 return;
-            yield ((_a = this.commands
-                .get(interaction.commandName)) === null || _a === void 0 ? void 0 : _a.execute(interaction, this));
+            }
+            if (interaction.isButton()) {
+                (_d = this.interactions.get(interaction.customId)) === null || _d === void 0 ? void 0 : _d(interaction, this);
+                return;
+            }
         }));
         this.login(process.env.DISCORD_BOT_TOKEN);
     }
