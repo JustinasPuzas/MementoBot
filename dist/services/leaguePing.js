@@ -46,7 +46,7 @@ const gameInfo = new Map([
             playerReaction: ":flag_ru:",
             buttonYes: new discord_js_1.ButtonBuilder({
                 label: "да",
-                style: discord_js_1.ButtonStyle.Danger,
+                style: discord_js_1.ButtonStyle.Success,
                 custom_id: `csgoPingYes`,
             }),
             buttonNo: new discord_js_1.ButtonBuilder({

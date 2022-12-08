@@ -60,7 +60,7 @@ const gameInfo: Map<String, GameInfo> = new Map([
       playerReaction: ":flag_ru:",
       buttonYes: new ButtonBuilder({
         label: "да",
-        style: ButtonStyle.Danger,
+        style: ButtonStyle.Success,
         custom_id: `csgoPingYes`,
       }),
       buttonNo: new ButtonBuilder({
