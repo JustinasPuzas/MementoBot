@@ -148,7 +148,7 @@ class PingManager {
     let counter = 1;
 
     this.members.forEach((id, user) => {
-      if (counter == this.gameInfo.maxPlayers) content += "**Queue:** \n";
+      if (counter == this.gameInfo.maxPlayers + 1) content += "**Queue:** \n";
       content += `\t${this.gameInfo.playerReaction} <@${user}>\n`;
       counter++;
     });
@@ -197,7 +197,9 @@ class PingService implements Service {
   }
 
   public async execute(message: Message, client: Client) {
+    if(!this.online) return;
     if (message.mentions.roles.size === 0) return;
+
     // create ping managers
     for (let roleId of message.mentions.roles.keys()) {
       this.pingManagers.get(roleId)?.execute(message, client);

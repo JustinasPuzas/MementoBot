@@ -129,7 +129,7 @@ class PingManager {
             let content = `**${this.gameInfo.gameIcon} ${this.gameInfo.name}**\n`;
             let counter = 1;
             this.members.forEach((id, user) => {
-                if (counter == this.gameInfo.maxPlayers)
+                if (counter == this.gameInfo.maxPlayers + 1)
                     content += "**Queue:** \n";
                 content += `\t${this.gameInfo.playerReaction} <@${user}>\n`;
                 counter++;
@@ -177,6 +177,8 @@ class PingService {
     execute(message, client) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            if (!this.online)
+                return;
             if (message.mentions.roles.size === 0)
                 return;
             // create ping managers
