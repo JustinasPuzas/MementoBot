@@ -35,6 +35,28 @@ const gameInfo = new Map([
         },
     ],
     [
+        "1050387555427815434", {
+            id: "mcPing",
+            name: "Minecraft",
+            description: "Minecraft Ping Manager",
+            role: "1050387555427815434",
+            maxPlayers: 100,
+            gameIcon: "<:minecraft:1050387214770638878>",
+            playerReaction: "<a:beeee:1050387140481138688>",
+            buttonYes: new discord_js_1.ButtonBuilder({
+                label: "",
+                style: discord_js_1.ButtonStyle.Success,
+                custom_id: `mcPingYes`,
+                emoji: "<a:beeee:1050387140481138688>",
+            }),
+            buttonNo: new discord_js_1.ButtonBuilder({
+                label: "nia",
+                style: discord_js_1.ButtonStyle.Secondary,
+                custom_id: `mcPingNo`,
+            }),
+        }
+    ],
+    [
         "379054412875825154",
         {
             id: "csgoPing",
@@ -71,7 +93,7 @@ class PingManager {
             yield this.reset();
             this.members.set(message.author.id, message.author);
             this.message = yield message.channel.send({
-                content: `**${this.gameInfo.gameIcon} ${this.gameInfo.name}**\n${this.gameInfo.playerReaction} ${message.author}`,
+                content: `**${this.gameInfo.gameIcon} ${this.gameInfo.name}**\n\t${this.gameInfo.playerReaction} ${message.author}`,
                 components: [this.actionRow],
             });
             // register functions
