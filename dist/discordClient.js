@@ -41,7 +41,6 @@ const promises_1 = __importDefault(require("fs/promises"));
 class Client extends discord_js_1.Client {
     constructor(options, riotClient) {
         super(options);
-        this.interactions = new Map();
         // connect to MongoDB
         this.connectToMongoDB = () => __awaiter(this, void 0, void 0, function* () {
             try {
@@ -112,14 +111,10 @@ class Client extends discord_js_1.Client {
             }));
         }));
         this.on("interactionCreate", (interaction) => __awaiter(this, void 0, void 0, function* () {
-            var _c, _d;
+            var _c;
             if (interaction.isChatInputCommand()) {
                 yield ((_c = this.commands
                     .get(interaction.commandName)) === null || _c === void 0 ? void 0 : _c.execute(interaction, this));
-                return;
-            }
-            if (interaction.isButton()) {
-                (_d = this.interactions.get(interaction.customId)) === null || _d === void 0 ? void 0 : _d(interaction, this);
                 return;
             }
         }));

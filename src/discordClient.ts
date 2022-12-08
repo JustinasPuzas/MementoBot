@@ -19,7 +19,6 @@ export default class Client extends DiscordClient {
   public commandTemplates!: any[];
   public services!: Map<string, Service>;
   public riotClient?: RiotClient;
-  public interactions: Map<String, Function> = new Map();
   constructor(options: ClientOptions, riotClient?: RiotClient) {
     super(options);
 
@@ -51,12 +50,6 @@ export default class Client extends DiscordClient {
         ?.execute(interaction, this);
         return
       }
-
-      if(interaction.isButton()){
-        this.interactions.get(interaction.customId)?.(interaction, this);
-        return
-      }
-      
     });
 
     this.login(process.env.DISCORD_BOT_TOKEN);

@@ -10,87 +10,159 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-class LeaguePing {
-    constructor(Client) {
-        this.id = "leaguePing";
-        this.name = "League Ping";
-        this.description = "Ping League of Legends servers";
-        this.online = false;
-        this.buttonYes = new discord_js_1.ButtonBuilder({
-            label: "",
-            style: discord_js_1.ButtonStyle.Danger,
-            custom_id: `${this.id}Yes`,
-            emoji: "<:0_:406198795404181504>"
-        });
-        this.buttonNo = new discord_js_1.ButtonBuilder({
-            label: "Bijau",
-            style: discord_js_1.ButtonStyle.Secondary,
-            custom_id: `${this.id}No`,
-        });
-        this.actionRow = new discord_js_1.ActionRowBuilder().addComponents(this.buttonYes, this.buttonNo);
+const gameInfo = new Map([
+    [
+        "379054265508823061",
+        {
+            id: "lolPing",
+            name: "League of Legends",
+            description: "League of Legends Ping Manager",
+            role: "379054265508823061",
+            maxPlayers: 5,
+            gameIcon: "<:lol:1050371342995820584>",
+            playerReaction: "<:0_:406198795404181504>",
+            buttonYes: new discord_js_1.ButtonBuilder({
+                label: "",
+                style: discord_js_1.ButtonStyle.Danger,
+                custom_id: `lolPingYes`,
+                emoji: "<:0_:406198795404181504>",
+            }),
+            buttonNo: new discord_js_1.ButtonBuilder({
+                label: "Bijau",
+                style: discord_js_1.ButtonStyle.Secondary,
+                custom_id: `lolPingNo`,
+            }),
+        },
+    ],
+    [
+        "379054412875825154",
+        {
+            id: "csgoPing",
+            name: "Counter Strike: Global Offensive",
+            description: "Counter Strike: Global Offensive Ping Manager",
+            role: "379054412875825154",
+            maxPlayers: 5,
+            gameIcon: "<:csgo:1050371298209058816>",
+            playerReaction: ":flag_ru:",
+            buttonYes: new discord_js_1.ButtonBuilder({
+                label: "да",
+                style: discord_js_1.ButtonStyle.Danger,
+                custom_id: `csgoPingYes`,
+            }),
+            buttonNo: new discord_js_1.ButtonBuilder({
+                label: "нет",
+                style: discord_js_1.ButtonStyle.Secondary,
+                custom_id: `csgoPingNo`,
+            }),
+        },
+    ],
+]);
+class PingManager {
+    constructor(gameInfo, client) {
         this.members = new Map();
         this.message = undefined;
-        this.online = true;
-        this.client = Client;
+        this.interactions = new Map();
+        this.client = client;
+        this.gameInfo = gameInfo;
+        this.actionRow = new discord_js_1.ActionRowBuilder().addComponents(this.gameInfo.buttonYes, this.gameInfo.buttonNo);
     }
     execute(message, client) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (message.content.trim() !== "<@&379054265508823061>")
-                return;
             yield this.reset();
             this.members.set(message.author.id, message.author);
             this.message = yield message.channel.send({
-                content: `<:0_:406198795404181504> ${message.author}`,
+                content: `**${this.gameInfo.gameIcon} ${this.gameInfo.name}**\n${this.gameInfo.playerReaction} ${message.author}`,
                 components: [this.actionRow],
             });
-            this.client.interactions.set(`${this.id}Yes`, this.handleYesInteraction);
-            this.client.interactions.set(`${this.id}No`, this.handleNoInteraction);
-            return;
+            // register functions
+            this.interactions.set(`${this.gameInfo.id}Yes`, this.handleYesInteraction);
+            this.interactions.set(`${this.gameInfo.id}No`, this.handleNoInteraction);
         });
     }
-    //exported function
-    handleYesInteraction(interaction, client) {
+    handleInteractions(interaction) {
         return __awaiter(this, void 0, void 0, function* () {
-            const parent = client.services.get("League Ping");
-            console.log(interaction);
+            const func = this.interactions.get(interaction.customId);
+            if (func) {
+                yield func(interaction, this);
+            }
+        });
+    }
+    handleYesInteraction(interaction, parent) {
+        return __awaiter(this, void 0, void 0, function* () {
             const user = interaction.user;
             parent.members.set(user.id, user);
             yield parent.update(interaction);
         });
     }
     //exported function
-    handleNoInteraction(interaction, client) {
+    handleNoInteraction(interaction, parent) {
         return __awaiter(this, void 0, void 0, function* () {
-            // find existing members and remove
-            // if user doesn't exist, add to niger list
-            const parent = client.services.get("League Ping");
             if (parent.members.delete(interaction.user.id))
-                parent.update(interaction);
+                return parent.update(interaction);
+            interaction.reply({ content: "Nu ir eik Nxj niekam nerrupi atsiciuhink", ephemeral: true });
         });
     }
     update(interaction) {
         return __awaiter(this, void 0, void 0, function* () {
-            let content = ``;
+            let content = `**${this.gameInfo.gameIcon} ${this.gameInfo.name}**\n`;
             let counter = 1;
             this.members.forEach((id, user) => {
-                if (counter == 5)
+                if (counter == this.gameInfo.maxPlayers)
                     content += "**Queue:** \n";
                 content += `<:0_:406198795404181504> <@${user}>\n`;
                 counter++;
             });
             if (this.members.size === 0)
-                content = "No one wants to play League :(";
+                content = "No one wants to play :(";
             yield interaction.update({ content });
         });
     }
     reset() {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            this.client.interactions.delete(`${this.id}Yes`);
-            this.client.interactions.delete(`${this.id}No`);
+            // remove all active buttons
+            this.interactions.clear();
             this.members = new Map();
             yield ((_a = this.message) === null || _a === void 0 ? void 0 : _a.delete());
         });
     }
 }
-exports.default = LeaguePing;
+class PingService {
+    constructor(Client) {
+        this.id = "Ping";
+        this.name = "Ping Service";
+        this.description = "Ping Service";
+        this.online = false;
+        this.pingManagers = new Map();
+        this.online = true;
+        this.client = Client;
+        //manage button clicks
+        for (let info of gameInfo) {
+            this.pingManagers.set(info[0], new PingManager(info[1], this.client));
+        }
+        this.client.on("interactionCreate", (interaction) => __awaiter(this, void 0, void 0, function* () {
+            if (!interaction.isButton())
+                return;
+            for (let manager of this.pingManagers.values()) {
+                if (interaction.customId.indexOf(manager.gameInfo.id) === -1)
+                    continue;
+                yield manager.handleInteractions(interaction);
+            }
+            // on button click
+            // find registered function
+        }));
+    }
+    execute(message, client) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (message.mentions.roles.size === 0)
+                return;
+            // create ping managers
+            for (let roleId of message.mentions.roles.keys()) {
+                (_a = this.pingManagers.get(roleId)) === null || _a === void 0 ? void 0 : _a.execute(message, client);
+            }
+            return;
+        });
+    }
+}
+exports.default = PingService;
