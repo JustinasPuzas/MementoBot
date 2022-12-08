@@ -109,7 +109,7 @@ class PingManager {
             this.members.forEach((id, user) => {
                 if (counter == this.gameInfo.maxPlayers)
                     content += "**Queue:** \n";
-                content += `<:0_:406198795404181504> <@${user}>\n`;
+                content += `\t${this.gameInfo.playerReaction} <@${user}>\n`;
                 counter++;
             });
             if (this.members.size === 0)
