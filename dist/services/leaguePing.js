@@ -35,11 +35,11 @@ const gameInfo = new Map([
         },
     ],
     [
-        "1050387555427815434", {
+        "889446083074330624", {
             id: "mcPing",
             name: "Minecraft",
             description: "Minecraft Ping Manager",
-            role: "1050387555427815434",
+            role: "889446083074330624",
             maxPlayers: 100,
             gameIcon: "<:minecraft:1050387214770638878>",
             playerReaction: "<a:beeee:1050387140481138688>",
