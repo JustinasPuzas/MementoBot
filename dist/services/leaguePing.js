@@ -121,7 +121,7 @@ class PingManager {
         return __awaiter(this, void 0, void 0, function* () {
             if (parent.members.delete(interaction.user.id))
                 return parent.update(interaction);
-            interaction.reply({ content: "Nu ir eik Nxj niekam nerrupi atsiciuhink", ephemeral: true });
+            yield interaction.reply({ content: "Nu ir eik Nxj niekam nerrupi atsiciuhink", ephemeral: true });
         });
     }
     update(interaction) {
@@ -143,9 +143,14 @@ class PingManager {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             // remove all active buttons
-            this.interactions.clear();
-            this.members = new Map();
-            yield ((_a = this.message) === null || _a === void 0 ? void 0 : _a.delete());
+            try {
+                this.interactions.clear();
+                this.members = new Map();
+                yield ((_a = this.message) === null || _a === void 0 ? void 0 : _a.delete());
+            }
+            catch (e) {
+                console.log(e);
+            }
         });
     }
 }
@@ -163,12 +168,17 @@ class PingService {
             this.pingManagers.set(info[0], new PingManager(info[1], this.client));
         }
         this.client.on("interactionCreate", (interaction) => __awaiter(this, void 0, void 0, function* () {
-            if (!interaction.isButton())
-                return;
-            for (let manager of this.pingManagers.values()) {
-                if (interaction.customId.indexOf(manager.gameInfo.id) === -1)
-                    continue;
-                yield manager.handleInteractions(interaction);
+            try {
+                if (!interaction.isButton())
+                    return;
+                for (let manager of this.pingManagers.values()) {
+                    if (interaction.customId.indexOf(manager.gameInfo.id) === -1)
+                        continue;
+                    yield manager.handleInteractions(interaction);
+                }
+            }
+            catch (e) {
+                console.error(e);
             }
             // on button click
             // find registered function
@@ -182,8 +192,13 @@ class PingService {
             if (message.mentions.roles.size === 0)
                 return;
             // create ping managers
-            for (let roleId of message.mentions.roles.keys()) {
-                (_a = this.pingManagers.get(roleId)) === null || _a === void 0 ? void 0 : _a.execute(message, client);
+            try {
+                for (let roleId of message.mentions.roles.keys()) {
+                    (_a = this.pingManagers.get(roleId)) === null || _a === void 0 ? void 0 : _a.execute(message, client);
+                }
+            }
+            catch (e) {
+                console.error(e);
             }
             return;
         });

@@ -140,7 +140,7 @@ class PingManager {
   //exported function
   private async handleNoInteraction(interaction: ButtonInteraction, parent: PingManager) {
     if (parent.members.delete(interaction.user.id)) return parent.update(interaction);
-    interaction.reply({ content: "Nu ir eik Nxj niekam nerrupi atsiciuhink", ephemeral: true });
+    await interaction.reply({ content: "Nu ir eik Nxj niekam nerrupi atsiciuhink", ephemeral: true });
   }
 
   public async update(interaction: ButtonInteraction) {
@@ -160,9 +160,14 @@ class PingManager {
 
   private async reset() {
     // remove all active buttons
-    this.interactions.clear();
+    try{
+      this.interactions.clear();
     this.members = new Map();
     await this.message?.delete();
+    }
+    catch(e){
+      console.log(e);
+    }
   }
 }
 
@@ -183,11 +188,15 @@ class PingService implements Service {
     }
 
     this.client.on("interactionCreate", async (interaction: Interaction) => {
-      if (!interaction.isButton()) return;
+      try{
+        if (!interaction.isButton()) return;
 
-      for (let manager of this.pingManagers.values()) {
-        if(interaction.customId.indexOf(manager.gameInfo.id) === -1) continue;
-        await manager.handleInteractions(interaction as ButtonInteraction);
+        for (let manager of this.pingManagers.values()) {
+          if(interaction.customId.indexOf(manager.gameInfo.id) === -1) continue;
+          await manager.handleInteractions(interaction as ButtonInteraction);
+        }
+      }catch(e){
+        console.error(e);
       }
 
       // on button click
@@ -201,8 +210,12 @@ class PingService implements Service {
     if (message.mentions.roles.size === 0) return;
 
     // create ping managers
-    for (let roleId of message.mentions.roles.keys()) {
-      this.pingManagers.get(roleId)?.execute(message, client);
+    try{
+      for (let roleId of message.mentions.roles.keys()) {
+        this.pingManagers.get(roleId)?.execute(message, client);
+      }
+    }catch(e){
+      console.error(e);
     }
     return;
   }
