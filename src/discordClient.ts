@@ -36,13 +36,6 @@ export default class Client extends DiscordClient {
       console.log("Services loaded:", this.services);
     });
 
-    this.on("messageCreate", async (message) => {
-      if (message.author.bot) return;
-      this.services.forEach(async (service) => {
-        await service.execute(message, this);
-      })
-    })
-
     this.on("interactionCreate", async (interaction) => {
       if (interaction.isChatInputCommand()){
         await this.commands

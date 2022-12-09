@@ -13,6 +13,7 @@
     "discord.js": "^14.4.0",
     "dotenv": "^16.0.2",
     "mongoose": "^6.6.1",
+    "op.gg-api": "^2.0.5-alpha",
     "twisted": "^1.49.0"
   }
 }

@@ -103,13 +103,6 @@ class Client extends discord_js_1.Client {
             this.services = yield this.fetchServices();
             console.log("Services loaded:", this.services);
         }));
-        this.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
-            if (message.author.bot)
-                return;
-            this.services.forEach((service) => __awaiter(this, void 0, void 0, function* () {
-                yield service.execute(message, this);
-            }));
-        }));
         this.on("interactionCreate", (interaction) => __awaiter(this, void 0, void 0, function* () {
             var _c;
             if (interaction.isChatInputCommand()) {

@@ -48,7 +48,8 @@ const gameInfo: Map<String, GameInfo> = new Map([
     },
   ],
   [
-    "889446083074330624", {
+    "889446083074330624",
+    {
       id: "mcPing",
       name: "Minecraft",
       description: "Minecraft Ping Manager",
@@ -67,7 +68,7 @@ const gameInfo: Map<String, GameInfo> = new Map([
         style: ButtonStyle.Secondary,
         custom_id: `mcPingNo`,
       }),
-    }
+    },
   ],
 
   [
@@ -131,16 +132,26 @@ class PingManager {
     }
   }
 
-  private async handleYesInteraction(interaction: ButtonInteraction, parent: PingManager) {
+  private async handleYesInteraction(
+    interaction: ButtonInteraction,
+    parent: PingManager
+  ) {
     const user = interaction.user;
     parent.members.set(user.id, user);
     await parent.update(interaction);
   }
 
   //exported function
-  private async handleNoInteraction(interaction: ButtonInteraction, parent: PingManager) {
-    if (parent.members.delete(interaction.user.id)) return parent.update(interaction);
-    await interaction.reply({ content: "Nu ir eik Nxj niekam nerrupi atsiciuhink", ephemeral: true });
+  private async handleNoInteraction(
+    interaction: ButtonInteraction,
+    parent: PingManager
+  ) {
+    if (parent.members.delete(interaction.user.id))
+      return parent.update(interaction);
+    await interaction.reply({
+      content: "Nu ir eik Nxj niekam nerrupi atsiciuhink",
+      ephemeral: true,
+    });
   }
 
   public async update(interaction: ButtonInteraction) {
@@ -160,12 +171,11 @@ class PingManager {
 
   private async reset() {
     // remove all active buttons
-    try{
+    try {
       this.interactions.clear();
-    this.members = new Map();
-    await this.message?.delete();
-    }
-    catch(e){
+      this.members = new Map();
+      await this.message?.delete();
+    } catch (e) {
       console.log(e);
     }
   }
@@ -182,44 +192,44 @@ class PingService implements Service {
   constructor(Client: Client) {
     this.online = true;
     this.client = Client;
-    //manage button clicks
+
+    // create ping managers
     for (let info of gameInfo) {
       this.pingManagers.set(info[0], new PingManager(info[1], this.client));
     }
 
+    // on button interaction
     this.client.on("interactionCreate", async (interaction: Interaction) => {
-      try{
+      try {
         if (!interaction.isButton()) return;
+        if(!interaction.customId.includes("Ping")) return;
 
+        // loop through all ping managers
         for (let manager of this.pingManagers.values()) {
-          if(interaction.customId.indexOf(manager.gameInfo.id) === -1) continue;
+          if (interaction.customId.indexOf(manager.gameInfo.id) === -1) continue;
           await manager.handleInteractions(interaction as ButtonInteraction);
         }
-      }catch(e){
+
+      } catch (e) {
         console.error(e);
       }
+    });
 
-      // on button click
+    this.client.on("messageCreate", async (message: Message) => {
+      if (!this.online) return;
+      if (message.mentions.roles.size === 0) return;
 
-      // find registered function
+      try {
+        // loop through all role mentions and initiate ping managers
+        for (let roleId of message.mentions.roles.keys()) {
+          this.pingManagers.get(roleId)?.execute(message, this.client);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+      return;
     });
   }
-
-  public async execute(message: Message, client: Client) {
-    if(!this.online) return;
-    if (message.mentions.roles.size === 0) return;
-
-    // create ping managers
-    try{
-      for (let roleId of message.mentions.roles.keys()) {
-        this.pingManagers.get(roleId)?.execute(message, client);
-      }
-    }catch(e){
-      console.error(e);
-    }
-    return;
-  }
-  //exported function
 }
 
 export default PingService;

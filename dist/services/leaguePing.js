@@ -35,7 +35,8 @@ const gameInfo = new Map([
         },
     ],
     [
-        "889446083074330624", {
+        "889446083074330624",
+        {
             id: "mcPing",
             name: "Minecraft",
             description: "Minecraft Ping Manager",
@@ -54,7 +55,7 @@ const gameInfo = new Map([
                 style: discord_js_1.ButtonStyle.Secondary,
                 custom_id: `mcPingNo`,
             }),
-        }
+        },
     ],
     [
         "379054412875825154",
@@ -121,7 +122,10 @@ class PingManager {
         return __awaiter(this, void 0, void 0, function* () {
             if (parent.members.delete(interaction.user.id))
                 return parent.update(interaction);
-            yield interaction.reply({ content: "Nu ir eik Nxj niekam nerrupi atsiciuhink", ephemeral: true });
+            yield interaction.reply({
+                content: "Nu ir eik Nxj niekam nerrupi atsiciuhink",
+                ephemeral: true,
+            });
         });
     }
     update(interaction) {
@@ -163,14 +167,18 @@ class PingService {
         this.pingManagers = new Map();
         this.online = true;
         this.client = Client;
-        //manage button clicks
+        // create ping managers
         for (let info of gameInfo) {
             this.pingManagers.set(info[0], new PingManager(info[1], this.client));
         }
+        // on button interaction
         this.client.on("interactionCreate", (interaction) => __awaiter(this, void 0, void 0, function* () {
             try {
                 if (!interaction.isButton())
                     return;
+                if (!interaction.customId.includes("Ping"))
+                    return;
+                // loop through all ping managers
                 for (let manager of this.pingManagers.values()) {
                     if (interaction.customId.indexOf(manager.gameInfo.id) === -1)
                         continue;
@@ -180,28 +188,24 @@ class PingService {
             catch (e) {
                 console.error(e);
             }
-            // on button click
-            // find registered function
         }));
-    }
-    execute(message, client) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
+        this.client.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
             if (!this.online)
                 return;
             if (message.mentions.roles.size === 0)
                 return;
-            // create ping managers
             try {
+                // loop through all role mentions and initiate ping managers
                 for (let roleId of message.mentions.roles.keys()) {
-                    (_a = this.pingManagers.get(roleId)) === null || _a === void 0 ? void 0 : _a.execute(message, client);
+                    (_a = this.pingManagers.get(roleId)) === null || _a === void 0 ? void 0 : _a.execute(message, this.client);
                 }
             }
             catch (e) {
                 console.error(e);
             }
             return;
-        });
+        }));
     }
 }
 exports.default = PingService;
