@@ -8,13 +8,72 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const Message_1 = __importDefault(require("../dataBase/schemas/Message"));
 class profileService {
     constructor(Client) {
         this.name = "profileService";
         this.description = "Profile Service";
         this.online = true;
         this.client = Client;
+        this.client.on("messageCreate", (message) => __awaiter(this, void 0, void 0, function* () {
+            if (!this.online)
+                return;
+            if (message.author.bot)
+                return;
+            yield Message_1.default.create({
+                authorId: message.author.id,
+                messageId: message.id,
+                content: message.content,
+                message: message.toJSON(),
+            });
+        }));
+        this.client.on("messageUpdate", (oldMessage, newMessage) => __awaiter(this, void 0, void 0, function* () {
+            // add massage to edits array
+            console.log("message updated");
+            if (!this.online)
+                return;
+            oldMessage = yield oldMessage.fetch();
+            newMessage = yield newMessage.fetch();
+            if (newMessage.author.bot)
+                return;
+            try {
+                yield Message_1.default.findOneAndUpdate({ messageId: newMessage.id }, { content: newMessage.content }, { $push: { edits: newMessage.toJSON() } });
+                return;
+            }
+            catch (e) {
+                console.log(e);
+            }
+            try {
+                yield Message_1.default.create({
+                    authorId: newMessage.author.id,
+                    messageId: newMessage.id,
+                    content: oldMessage.content,
+                    message: oldMessage.toJSON(),
+                    edits: [newMessage.toJSON()]
+                });
+                return;
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }));
+        this.client.on("messageDelete", (message) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            if (!this.online)
+                return;
+            if ((_a = message.author) === null || _a === void 0 ? void 0 : _a.bot)
+                return;
+            try {
+                yield Message_1.default.findOneAndUpdate({ messageId: message.id, }, { deleted: true, });
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }));
     }
     getUser() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -41,7 +100,7 @@ class profileService {
     execute() {
         return __awaiter(this, void 0, void 0, function* () {
             // count time in voice channel
-            // count messages 
+            // count messages
         });
     }
 }
