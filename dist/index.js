@@ -39,6 +39,7 @@ const intents = [
     discord_js_1.GatewayIntentBits.MessageContent,
     discord_js_1.GatewayIntentBits.GuildMembers,
     discord_js_1.GatewayIntentBits.GuildWebhooks,
+    discord_js_1.GatewayIntentBits.GuildVoiceStates,
 ];
 //const riotClient = new RiotClient({ key: process.env.RIOT_API_KEY });
 const client = new discordClient_1.default({ intents });

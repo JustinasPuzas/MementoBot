@@ -15,6 +15,7 @@ const intents = [
   GatewayIntentBits.MessageContent,
   GatewayIntentBits.GuildMembers,
   GatewayIntentBits.GuildWebhooks,
+  GatewayIntentBits.GuildVoiceStates,
 ];
 
 //const riotClient = new RiotClient({ key: process.env.RIOT_API_KEY });

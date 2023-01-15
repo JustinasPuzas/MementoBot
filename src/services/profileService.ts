@@ -1,7 +1,8 @@
 import { Service } from "./helpers/interfaces";
 import Client from "../discordClient";
-import { Message, PartialMessage } from "discord.js";
+import { EmbedBuilder, GuildMember, Message, PartialMessage } from "discord.js";
 import MessageDb from "../dataBase/schemas/Message";
+import UserDb from "../dataBase/schemas/User";
 
 class profileService implements Service {
   name: string = "profileService";
@@ -69,19 +70,26 @@ class profileService implements Service {
         }
       }
     );
+
   }
 
-  async getUser() {
+  public async getMemberProfileEmbed(member: GuildMember): Promise<EmbedBuilder> {
+    const userDb = await UserDb.findOne({userId : member.id});
+    const embed = new EmbedBuilder()
+    member = this.getMemberProfile(member);
     // get number of messages sent by user
     // check if exists
     // if not exists, create
-    console.log("getUser");
+    return embed;
   }
 
-  private async registerUser() {
-    // create user
-    console.log("registerUser");
+  public getMemberProfile(member: GuildMember): GuildMember {
+    member.nickname = member.nickname? member.nickname : member.user.username;
+    member.avatar = member.avatarURL()? member.avatarURL() : member.user.avatarURL()? member.user.avatarURL() : member.user.defaultAvatarURL;
+    return member
   }
+
+
 
   async connectToOpGg() {
     // check if exists

@@ -9,11 +9,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/opus": "^0.8.0",
+    "@discordjs/voice": "^0.14.0",
     "@types/node": "^18.7.18",
+    "discord-player": "^5.3.2",
     "discord.js": "^14.4.0",
     "dotenv": "^16.0.2",
     "mongoose": "^6.6.1",
     "op.gg-api": "^2.0.5-alpha",
-    "twisted": "^1.49.0"
+    "twisted": "^1.49.0",
+    "ytdl-core": "^4.11.2"
   }
 }

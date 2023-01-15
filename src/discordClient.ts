@@ -2,6 +2,7 @@ import {
   Client as DiscordClient,
   ClientOptions,
   GatewayIntentBits,
+  Guild,
   Interaction,
   REST,
   Routes,
@@ -19,18 +20,22 @@ export default class Client extends DiscordClient {
   public commandTemplates!: any[];
   public services!: Map<string, Service>;
   public riotClient?: RiotClient;
+  public GUILD!: Guild
   constructor(options: ClientOptions, riotClient?: RiotClient) {
     super(options);
 
     this.on("ready", async () => {
       await this.connectToMongoDB();
+      console.log("Connected to MongoDB Atlas");
+
+      this.GUILD = this.guilds.cache.get("308024048967745536") as Guild;
 
       const { cmds, cmdsTmpl } = await this.fetchCommands();
       this.commands = cmds;
       console.log("Commands loaded:", this.commands);
 
       await this.refreshDiscordApplicationCommands(cmdsTmpl);
-      console.log("Command temoplates loaded:", this.commandTemplates);
+      console.log("Command templates loaded:", this.commandTemplates);
 
       this.services = await this.fetchServices();
       console.log("Services loaded:", this.services);
