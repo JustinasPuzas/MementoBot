@@ -33,6 +33,7 @@ class MusicService {
             this.queue.addTrack(song);
             if (!this.queue.playing)
                 yield this.queue.play();
+            return;
         });
     }
     constructor(Client) {

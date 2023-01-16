@@ -12,7 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const discord_js_1 = require("discord.js");
 const Message_1 = __importDefault(require("../dataBase/schemas/Message"));
+const User_1 = __importDefault(require("../dataBase/schemas/User"));
 class profileService {
     constructor(Client) {
         this.name = "profileService";
@@ -75,19 +77,23 @@ class profileService {
             }
         }));
     }
-    getUser() {
+    getMemberProfileEmbed(member) {
         return __awaiter(this, void 0, void 0, function* () {
+            const userDb = yield User_1.default.findOne({ userId: member.id });
+            member = this.getMemberProfile(member);
+            const embed = new discord_js_1.EmbedBuilder()
+                .setThumbnail(member.avatar)
+                .setTitle(member.nickname);
             // get number of messages sent by user
             // check if exists
             // if not exists, create
-            console.log("getUser");
+            return embed;
         });
     }
-    registerUser() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // create user
-            console.log("registerUser");
-        });
+    getMemberProfile(member) {
+        member.nickname = member.nickname ? member.nickname : member.user.username;
+        member.avatar = member.avatarURL() ? member.avatarURL() : member.user.avatarURL() ? member.user.avatarURL() : member.user.defaultAvatarURL;
+        return member;
     }
     connectToOpGg() {
         return __awaiter(this, void 0, void 0, function* () {

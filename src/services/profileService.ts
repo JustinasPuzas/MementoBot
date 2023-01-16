@@ -75,8 +75,11 @@ class profileService implements Service {
 
   public async getMemberProfileEmbed(member: GuildMember): Promise<EmbedBuilder> {
     const userDb = await UserDb.findOne({userId : member.id});
-    const embed = new EmbedBuilder()
     member = this.getMemberProfile(member);
+    const embed = new EmbedBuilder()
+      .setThumbnail(member.avatar)
+      .setTitle(member.nickname)
+      
     // get number of messages sent by user
     // check if exists
     // if not exists, create
