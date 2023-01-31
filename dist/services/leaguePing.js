@@ -35,6 +35,30 @@ const gameInfo = new Map([
         },
     ],
     [
+        "1070121180087988244",
+        {
+            id: "aramPing",
+            name: "ARAM",
+            description: "ARAM Ping Manager",
+            role: "1070121180087988244",
+            maxPlayers: 5,
+            gameIcon: "<:Aram:1070119467293618278>",
+            playerReaction: "<:snowBall:1070123779667279912>",
+            buttonYes: new discord_js_1.ButtonBuilder({
+                label: "",
+                style: discord_js_1.ButtonStyle.Primary,
+                custom_id: `aramPingYes`,
+                emoji: "<a:poroW:1070125024230506576>",
+            }),
+            buttonNo: new discord_js_1.ButtonBuilder({
+                label: "",
+                style: discord_js_1.ButtonStyle.Secondary,
+                custom_id: `aramPingNo`,
+                emoji: "<a:poroL:1070125109429411910>",
+            }),
+        },
+    ],
+    [
         "889446083074330624",
         {
             id: "mcPing",
