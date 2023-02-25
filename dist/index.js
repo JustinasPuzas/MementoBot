@@ -26,6 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.client = void 0;
 const discord_js_1 = require("discord.js");
 const dotenv = __importStar(require("dotenv"));
 const discordClient_1 = __importDefault(require("./discordClient"));
@@ -42,4 +43,4 @@ const intents = [
     discord_js_1.GatewayIntentBits.GuildVoiceStates,
 ];
 //const riotClient = new RiotClient({ key: process.env.RIOT_API_KEY });
-const client = new discordClient_1.default({ intents });
+exports.client = new discordClient_1.default({ intents });

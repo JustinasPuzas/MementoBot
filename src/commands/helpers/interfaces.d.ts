@@ -4,5 +4,5 @@ export interface Command {
     name: string;
     description: string;
     template: any;
-    async execute: (interaction: Interaction<CacheType>, client: Client) => Promise<void>;
+    async execute: (interaction: ChatInputCommandInteraction<CacheType>, client: Client) => Promise<void | InteractionResponse<boolean>>;
   }

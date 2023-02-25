@@ -107,10 +107,24 @@ class Client extends discord_js_1.Client {
         }));
         this.on("interactionCreate", (interaction) => __awaiter(this, void 0, void 0, function* () {
             var _c;
-            if (interaction.isChatInputCommand()) {
-                yield ((_c = this.commands
-                    .get(interaction.commandName)) === null || _c === void 0 ? void 0 : _c.execute(interaction, this));
+            if (!interaction.user)
                 return;
+            if (!interaction.isChatInputCommand())
+                return;
+            try {
+                const reply = yield ((_c = this.commands
+                    .get(interaction.commandName)) === null || _c === void 0 ? void 0 : _c.execute(interaction, this));
+                if (reply)
+                    setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+                        yield interaction.deleteReply();
+                    }), 120 * 1000);
+            }
+            catch (e) {
+                console.log(e);
+                const reply = yield interaction.reply(`**There was an error while executing this command!**\n${e}`);
+                setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+                    yield interaction.deleteReply();
+                }), 60 * 1000);
             }
         }));
         this.login(process.env.DISCORD_BOT_TOKEN);

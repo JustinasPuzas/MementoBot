@@ -20,7 +20,7 @@ export default class Client extends DiscordClient {
   public commandTemplates!: any[];
   public services!: Map<string, Service>;
   public riotClient?: RiotClient;
-  public GUILD!: Guild
+  public GUILD!: Guild;
   constructor(options: ClientOptions, riotClient?: RiotClient) {
     super(options);
 
@@ -42,11 +42,23 @@ export default class Client extends DiscordClient {
     });
 
     this.on("interactionCreate", async (interaction) => {
-      if (interaction.isChatInputCommand()){
-        await this.commands
-        .get(interaction.commandName)
-        ?.execute(interaction, this);
-        return
+      if (!interaction.user) return;
+      if (!interaction.isChatInputCommand()) return;
+      try {
+        const reply = await this.commands
+          .get(interaction.commandName)
+          ?.execute(interaction, this);
+        if (reply)
+          setTimeout(async () => {
+            await interaction.deleteReply();
+          }, 120 * 1000);
+      } catch (e) {
+        console.log(e);
+        const reply = await interaction.reply(`**There was an error while executing this command!**\n${e}`);
+        setTimeout(async () => {
+          await interaction.deleteReply();
+        }
+        ,  60 * 1000);
       }
     });
 
@@ -112,5 +124,5 @@ export default class Client extends DiscordClient {
     }
 
     return services;
-  }
+  };
 }

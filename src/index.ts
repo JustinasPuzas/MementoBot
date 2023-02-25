@@ -19,4 +19,4 @@ const intents = [
 ];
 
 //const riotClient = new RiotClient({ key: process.env.RIOT_API_KEY });
-const client = new Client({ intents });
+export const client = new Client({ intents });
