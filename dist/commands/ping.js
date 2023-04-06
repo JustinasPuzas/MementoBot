@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const User_1 = __importDefault(require("../dataBase/schemas/User"));
 class PingCommand {
     constructor() {
+        this.online = false;
         this.name = "ping";
         this.description = "Replies with Pong!";
         this.template = {

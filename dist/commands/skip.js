@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 class SkipCommand {
     constructor() {
+        this.online = false;
         this.name = "skip";
         this.description = "Skip a song!";
         this.template = {

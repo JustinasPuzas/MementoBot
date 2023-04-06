@@ -1,6 +1,7 @@
 import { Client } from "../index";
 
 export interface Command {
+    online: boolean
     name: string;
     description: string;
     template: any;

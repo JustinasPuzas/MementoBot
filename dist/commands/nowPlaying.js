@@ -16,6 +16,7 @@ const discord_js_1 = require("discord.js");
 const Member_1 = __importDefault(require("../parsers/Member"));
 class NowPlayingCommand {
     constructor() {
+        this.online = false;
         this.name = "np";
         this.description = "Show Currently playing song";
         this.template = {

@@ -5,6 +5,7 @@ import MusicService from "../services/musicService";
 import { Command } from "./helpers/interfaces";
 
 class SkipCommand implements Command {
+  online = false;
   name = "queue";
   description = "Request queue!";
   template = {

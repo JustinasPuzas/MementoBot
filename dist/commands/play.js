@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 class PlayCommand {
     constructor() {
+        this.online = false;
         this.name = "play";
         this.description = "Play a song!";
         this.template = {

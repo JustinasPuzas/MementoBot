@@ -75,6 +75,8 @@ class Client extends discord_js_1.Client {
             for (let commandFile of commandFiles) {
                 const command = yield (_a = `${__dirname}/commands/${commandFile}`, Promise.resolve().then(() => __importStar(require(_a))));
                 const cmd = new command.default();
+                if (!cmd.online)
+                    continue;
                 cmds.set(cmd.name, cmd);
                 console.log(cmd.template);
                 if (cmd.template)
@@ -89,7 +91,8 @@ class Client extends discord_js_1.Client {
             for (let service of servicesFiles) {
                 const serviceClass = yield (_b = `${__dirname}/services/${service}`, Promise.resolve().then(() => __importStar(require(_b))));
                 const serviceInstance = new serviceClass.default(this);
-                services.set(serviceInstance.name, serviceInstance);
+                if (serviceInstance.online)
+                    services.set(serviceInstance.name, serviceInstance);
             }
             return services;
         });

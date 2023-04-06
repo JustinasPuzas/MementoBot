@@ -105,6 +105,7 @@ export default class Client extends DiscordClient {
     for (let commandFile of commandFiles) {
       const command = await import(`${__dirname}/commands/${commandFile}`);
       const cmd: Command = new command.default();
+      if(!cmd.online) continue;
       cmds.set(cmd.name, cmd);
       console.log(cmd.template);
       if (cmd.template) cmdsTmpl.push(cmd.template);
@@ -120,7 +121,8 @@ export default class Client extends DiscordClient {
     for (let service of servicesFiles) {
       const serviceClass = await import(`${__dirname}/services/${service}`);
       const serviceInstance: Service = new serviceClass.default(this);
-      services.set(serviceInstance.name, serviceInstance);
+      if(serviceInstance.online)
+        services.set(serviceInstance.name, serviceInstance);
     }
 
     return services;

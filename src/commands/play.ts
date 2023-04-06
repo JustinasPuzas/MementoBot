@@ -5,6 +5,7 @@ import MusicService from "../services/musicService";
 import { Command } from "./helpers/interfaces";
 
 class PlayCommand implements Command {
+  online = false;
   name = "play";
   description = "Play a song!";
   template = {

@@ -13,6 +13,7 @@ import { Command } from "./helpers/interfaces";
 import MemberP from "../parsers/Member";
 
 class NowPlayingCommand implements Command {
+  online = false;
   name = "np";
   description = "Show Currently playing song";
   template = {

@@ -127,12 +127,10 @@ class MusicService {
                 searchEngine: discord_player_1.QueryType.YOUTUBE_VIDEO,
             });
             // Add song to queue
-            const song = result.tracks[0];
-            this.queue.addTrack(song);
+            this.queue.addTrack(result.tracks[0]);
             // Play song if not already playing
             if (!this.queue.playing)
-                yield this.queue.play();
-            return;
+                this.queue.play();
         });
     }
     getTrackLength() {
@@ -147,7 +145,7 @@ class MusicService {
     constructor(Client) {
         this.name = "MusicService";
         this.description = "Ping Service";
-        this.online = true;
+        this.online = false;
         //   queue: Array<String> = [];
         // OFF = 0,
         // TRACK = 1,
@@ -157,8 +155,8 @@ class MusicService {
         this.client = Client;
         this.player = new discord_player_1.Player(this.client, {
             ytdlOptions: {
-                quality: "highestaudio",
-                highWaterMark: 1 << 25,
+                quality: "audioonly",
+                filter: "audioonly",
             },
         });
         this.queue = this.player.createQueue(this.client.GUILD);

@@ -4,6 +4,7 @@ import Client from "../discordClient";
 import { Command } from "./helpers/interfaces";
 
 class PingCommand implements Command {
+  online = false;
   name = "ping";
   description = "Replies with Pong!";
   template = {

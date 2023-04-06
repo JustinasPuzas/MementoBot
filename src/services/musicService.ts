@@ -2,6 +2,7 @@ import Client from "../discordClient";
 import { APIEmbedField, ColorResolvable, EmbedBuilder } from "discord.js";
 import { Service } from "./helpers/interfaces";
 import { Player, Queue, QueryType } from "discord-player";
+import Downloader from "@discord-player/downloader";
 import { getAverageColor } from "fast-average-color-node";
 
 import {
@@ -15,7 +16,7 @@ import {
 class MusicService implements Service {
   name: string = "MusicService";
   description: string = "Ping Service";
-  online = true;
+  online = false;
   client: Client;
   //   queue: Array<String> = [];
 
@@ -121,7 +122,6 @@ class MusicService implements Service {
     // Join voice channel if not already in one
     if (!this.queue.connection && member?.voice?.channel)
       await this.queue.connect(member.voice.channel);
-
     // Search for song
     const result = await this.player.search(songLink, {
       requestedBy: interaction.user,
@@ -129,13 +129,11 @@ class MusicService implements Service {
     });
 
     // Add song to queue
-    const song = result.tracks[0];
-    this.queue.addTrack(song);
+    this.queue.addTrack(result.tracks[0]);
 
     // Play song if not already playing
-    if (!this.queue.playing) await this.queue.play();
+    if (!this.queue.playing) this.queue.play();
 
-    return;
   }
 
   private async getTrackLength(){
@@ -148,8 +146,8 @@ class MusicService implements Service {
     this.client = Client;
     this.player = new Player(this.client, {
       ytdlOptions: {
-        quality: "highestaudio",
-        highWaterMark: 1 << 25,
+        quality: "audioonly",
+        filter: "audioonly",
       },
     });
 
