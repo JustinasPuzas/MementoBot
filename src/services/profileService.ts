@@ -5,7 +5,7 @@ import MessageDb from "../dataBase/schemas/Message";
 import UserDb from "../dataBase/schemas/User";
 
 class profileService implements Service {
-  name: string = "profileService";
+  name: string = "Profile Service";
   description: string = "Profile Service";
   online = true;
   client: Client;

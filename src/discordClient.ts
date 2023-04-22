@@ -15,6 +15,17 @@ import { Command } from "./commands/helpers/interfaces";
 import RiotClient from "./leagueClient";
 import { Service } from "./services/helpers/interfaces";
 
+const displayList = (list: Map<string, any>) => {
+  if(list.size > 0){
+    let display = "";
+    for(let i of list){
+      display += `✅ ${i[0]}\n`
+    }
+    return `\n${display}` ;
+  }
+  return "none\n"
+}
+
 export default class Client extends DiscordClient {
   public commands!: Map<string, Command>;
   public commandTemplates!: any[];
@@ -25,20 +36,19 @@ export default class Client extends DiscordClient {
     super(options);
 
     this.on("ready", async () => {
+      console.log("🌀 Connecting to MongoDB Atlas...");
       await this.connectToMongoDB();
-      console.log("Connected to MongoDB Atlas");
 
       this.GUILD = this.guilds.cache.get("308024048967745536") as Guild;
 
       const { cmds, cmdsTmpl } = await this.fetchCommands();
       this.commands = cmds;
-      console.log("Commands loaded:", this.commands);
+      console.log("Commands loaded:", displayList(this.commands));
 
       await this.refreshDiscordApplicationCommands(cmdsTmpl);
-      console.log("Command templates loaded:", this.commandTemplates);
 
       this.services = await this.fetchServices();
-      console.log("Services loaded:", this.services);
+      console.log("Services loaded:", displayList(this.services));
     });
 
     this.on("interactionCreate", async (interaction) => {
@@ -68,8 +78,8 @@ export default class Client extends DiscordClient {
   // connect to MongoDB
   private connectToMongoDB = async () => {
     try {
-      mongoose.connect(`${process.env.DB_CONN_STRING}`);
-      console.log("Connected to MongoDB Atlas");
+      await mongoose.connect(`${process.env.DB_CONN_STRING}`);
+      console.log("✅ Connected to MongoDB Atlas");
     } catch (error) {
       console.log(error);
     }
@@ -90,7 +100,7 @@ export default class Client extends DiscordClient {
         body: commandTemplates,
       });
 
-      console.log("Successfully reloaded application (/) commands.");
+      console.log("✅ Successfully reloaded application (/) commands.\n");
     } catch (error) {
       console.error(error);
     }

@@ -17,7 +17,7 @@ const Message_1 = __importDefault(require("../dataBase/schemas/Message"));
 const User_1 = __importDefault(require("../dataBase/schemas/User"));
 class profileService {
     constructor(Client) {
-        this.name = "profileService";
+        this.name = "Profile Service";
         this.description = "Profile Service";
         this.online = true;
         this.client = Client;

@@ -38,14 +38,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const mongoose_1 = __importDefault(require("mongoose"));
 const promises_1 = __importDefault(require("fs/promises"));
+const displayList = (list) => {
+    if (list.size > 0) {
+        let display = "";
+        for (let i of list) {
+            display += `✅ ${i[0]}\n`;
+        }
+        return `\n${display}`;
+    }
+    return "none\n";
+};
 class Client extends discord_js_1.Client {
     constructor(options, riotClient) {
         super(options);
         // connect to MongoDB
         this.connectToMongoDB = () => __awaiter(this, void 0, void 0, function* () {
             try {
-                mongoose_1.default.connect(`${process.env.DB_CONN_STRING}`);
-                console.log("Connected to MongoDB Atlas");
+                yield mongoose_1.default.connect(`${process.env.DB_CONN_STRING}`);
+                console.log("✅ Connected to MongoDB Atlas");
             }
             catch (error) {
                 console.log(error);
@@ -60,7 +70,7 @@ class Client extends discord_js_1.Client {
                 yield rest.put(discord_js_1.Routes.applicationCommands(`${process.env.CLIENT_ID}`), {
                     body: commandTemplates,
                 });
-                console.log("Successfully reloaded application (/) commands.");
+                console.log("✅ Successfully reloaded application (/) commands.\n");
             }
             catch (error) {
                 console.error(error);
@@ -97,16 +107,15 @@ class Client extends discord_js_1.Client {
             return services;
         });
         this.on("ready", () => __awaiter(this, void 0, void 0, function* () {
+            console.log("🌀 Connecting to MongoDB Atlas...");
             yield this.connectToMongoDB();
-            console.log("Connected to MongoDB Atlas");
             this.GUILD = this.guilds.cache.get("308024048967745536");
             const { cmds, cmdsTmpl } = yield this.fetchCommands();
             this.commands = cmds;
-            console.log("Commands loaded:", this.commands);
+            console.log("Commands loaded:", displayList(this.commands));
             yield this.refreshDiscordApplicationCommands(cmdsTmpl);
-            console.log("Command templates loaded:", this.commandTemplates);
             this.services = yield this.fetchServices();
-            console.log("Services loaded:", this.services);
+            console.log("Services loaded:", displayList(this.services));
         }));
         this.on("interactionCreate", (interaction) => __awaiter(this, void 0, void 0, function* () {
             var _c;

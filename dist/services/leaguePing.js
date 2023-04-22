@@ -35,6 +35,52 @@ const gameInfo = new Map([
         },
     ],
     [
+        "1099120902341402744",
+        {
+            id: "tftPing",
+            name: "Team Fight Tactics",
+            description: "Team Fight Tactics Ping Manager",
+            role: "1099120902341402744",
+            maxPlayers: 8,
+            gameIcon: "<:tft:1099115104198479872>",
+            playerReaction: "<a:pengu:1099115708878700544>",
+            buttonYes: new discord_js_1.ButtonBuilder({
+                label: "",
+                style: discord_js_1.ButtonStyle.Success,
+                custom_id: `tftPingYes`,
+                emoji: "<:tftArena:1099121711309406258>",
+            }),
+            buttonNo: new discord_js_1.ButtonBuilder({
+                label: "",
+                style: discord_js_1.ButtonStyle.Danger,
+                custom_id: `tftPingNo`,
+                emoji: "<:tftL:1099122414249582713>",
+            }),
+        },
+    ],
+    [
+        "843933198907736066",
+        {
+            id: "valPing",
+            name: "Valorant",
+            description: "Valorant Ping Manager",
+            role: "843933198907736066",
+            maxPlayers: 5,
+            gameIcon: "<:valorant:1099123434962821191>",
+            playerReaction: "<a:goodSage:1099124499351355442>",
+            buttonYes: new discord_js_1.ButtonBuilder({
+                label: "Yes",
+                style: discord_js_1.ButtonStyle.Success,
+                custom_id: `valPingYes`,
+            }),
+            buttonNo: new discord_js_1.ButtonBuilder({
+                label: "No",
+                style: discord_js_1.ButtonStyle.Danger,
+                custom_id: `valPingNo`,
+            }),
+        },
+    ],
+    [
         "1070121180087988244",
         {
             id: "aramPing",
