@@ -118,7 +118,7 @@ export default class Client extends DiscordClient {
       const cmd: Command = new command.default();
       if (!cmd.online) continue;
       cmds.set(cmd.name, cmd);
-      console.log(cmd.template);
+      //console.log(cmd.template);
       if (cmd.template) cmdsTmpl.push(cmd.template);
     }
 
