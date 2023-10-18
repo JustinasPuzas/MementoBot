@@ -32,6 +32,8 @@ const gameInfo = new Map([
                 style: discord_js_1.ButtonStyle.Secondary,
                 custom_id: `lolPingNo`,
             }),
+            // keywords for League of Legends
+            keywords: ["lol", "league", "league of legends", "leagueoflegends"],
         },
     ],
     [
@@ -46,16 +48,18 @@ const gameInfo = new Map([
             playerReaction: "<a:pengu:1099115708878700544>",
             buttonYes: new discord_js_1.ButtonBuilder({
                 label: "",
-                style: discord_js_1.ButtonStyle.Success,
+                style: discord_js_1.ButtonStyle.Primary,
                 custom_id: `tftPingYes`,
                 emoji: "<:tftArena:1099121711309406258>",
             }),
             buttonNo: new discord_js_1.ButtonBuilder({
                 label: "",
-                style: discord_js_1.ButtonStyle.Danger,
+                style: discord_js_1.ButtonStyle.Secondary,
                 custom_id: `tftPingNo`,
                 emoji: "<:tftL:1099122414249582713>",
             }),
+            // keywords for Team Fight Tactics
+            keywords: ["tft", "team fight tactics", "teamfighttactics"],
         },
     ],
     [
@@ -75,9 +79,11 @@ const gameInfo = new Map([
             }),
             buttonNo: new discord_js_1.ButtonBuilder({
                 label: "No",
-                style: discord_js_1.ButtonStyle.Danger,
+                style: discord_js_1.ButtonStyle.Secondary,
                 custom_id: `valPingNo`,
             }),
+            // keywords for Valorant
+            keywords: ["val", "valorant"],
         },
     ],
     [
@@ -102,6 +108,8 @@ const gameInfo = new Map([
                 custom_id: `aramPingNo`,
                 emoji: "<a:poroL:1070125109429411910>",
             }),
+            // keywords for ARAM
+            keywords: ["aram", "arams", "aram ping", "aramping"],
         },
     ],
     [
@@ -125,6 +133,8 @@ const gameInfo = new Map([
                 style: discord_js_1.ButtonStyle.Secondary,
                 custom_id: `mcPingNo`,
             }),
+            // keywords for Minecraft
+            keywords: ["mc", "minecraft", "mine", "minecraf"],
         },
     ],
     [
@@ -147,6 +157,8 @@ const gameInfo = new Map([
                 style: discord_js_1.ButtonStyle.Secondary,
                 custom_id: `csgoPingNo`,
             }),
+            // keywords for Counter Strike: Global Offensive
+            keywords: ["csgo", "counter strike", "counterstrike", "counter strike global offensive", "counterstrikeglobaloffensive"],
         },
     ],
 ]);
@@ -235,10 +247,11 @@ class PingService {
         this.description = "Ping Service";
         this.online = false;
         this.pingManagers = new Map();
+        this.pingInfo = gameInfo;
         this.online = true;
         this.client = Client;
         // create ping managers
-        for (let info of gameInfo) {
+        for (let info of this.pingInfo) {
             this.pingManagers.set(info[0], new PingManager(info[1], this.client));
         }
         // on button interaction

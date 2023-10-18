@@ -23,9 +23,9 @@ class PlayCommand {
                     name: "query",
                     type: discord_js_1.ApplicationCommandOptionType.String,
                     description: "The song you want to play",
-                    required: true
-                }
-            ]
+                    required: true,
+                },
+            ],
         };
     }
     execute(interaction, client) {

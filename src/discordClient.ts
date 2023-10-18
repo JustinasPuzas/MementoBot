@@ -16,15 +16,15 @@ import RiotClient from "./leagueClient";
 import { Service } from "./services/helpers/interfaces";
 
 const displayList = (list: Map<string, any>) => {
-  if(list.size > 0){
+  if (list.size > 0) {
     let display = "";
-    for(let i of list){
-      display += `✅ ${i[0]}\n`
+    for (let i of list) {
+      display += `✅ ${i[0]}\n`;
     }
-    return `\n${display}` ;
+    return `\n${display}`;
   }
-  return "none\n"
-}
+  return "none\n";
+};
 
 export default class Client extends DiscordClient {
   public commands!: Map<string, Command>;
@@ -41,14 +41,14 @@ export default class Client extends DiscordClient {
 
       this.GUILD = this.guilds.cache.get("308024048967745536") as Guild;
 
+      this.services = await this.fetchServices();
+      console.log("Services loaded:", displayList(this.services));
+
       const { cmds, cmdsTmpl } = await this.fetchCommands();
       this.commands = cmds;
       console.log("Commands loaded:", displayList(this.commands));
 
       await this.refreshDiscordApplicationCommands(cmdsTmpl);
-
-      this.services = await this.fetchServices();
-      console.log("Services loaded:", displayList(this.services));
     });
 
     this.on("interactionCreate", async (interaction) => {
@@ -64,11 +64,12 @@ export default class Client extends DiscordClient {
           }, 120 * 1000);
       } catch (e) {
         console.log(e);
-        const reply = await interaction.reply(`**There was an error while executing this command!**\n${e}`);
+        const reply = await interaction.reply(
+          `**There was an error while executing this command!**\n${e}`
+        );
         setTimeout(async () => {
           await interaction.deleteReply();
-        }
-        ,  60 * 1000);
+        }, 60 * 1000);
       }
     });
 
@@ -115,7 +116,7 @@ export default class Client extends DiscordClient {
     for (let commandFile of commandFiles) {
       const command = await import(`${__dirname}/commands/${commandFile}`);
       const cmd: Command = new command.default();
-      if(!cmd.online) continue;
+      if (!cmd.online) continue;
       cmds.set(cmd.name, cmd);
       console.log(cmd.template);
       if (cmd.template) cmdsTmpl.push(cmd.template);
@@ -131,7 +132,7 @@ export default class Client extends DiscordClient {
     for (let service of servicesFiles) {
       const serviceClass = await import(`${__dirname}/services/${service}`);
       const serviceInstance: Service = new serviceClass.default(this);
-      if(serviceInstance.online)
+      if (serviceInstance.online)
         services.set(serviceInstance.name, serviceInstance);
     }
 

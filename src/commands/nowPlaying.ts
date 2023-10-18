@@ -12,7 +12,7 @@ import MusicService from "../services/musicService";
 import { Command } from "./helpers/interfaces";
 import MemberP from "../parsers/Member";
 
-class NowPlayingCommand implements Command {
+export default class NowPlayingCommand implements Command {
   online = false;
   name = "np";
   description = "Show Currently playing song";
@@ -53,5 +53,3 @@ class NowPlayingCommand implements Command {
     return await interaction.reply({ embeds: [embed] });
   }
 }
-
-export default NowPlayingCommand;

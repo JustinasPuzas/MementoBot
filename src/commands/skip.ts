@@ -4,7 +4,7 @@ import Client from "../discordClient";
 import MusicService from "../services/musicService";
 import { Command } from "./helpers/interfaces";
 
-class SkipCommand implements Command {
+export default class SkipCommand implements Command {
   online = false;
   name = "skip";
   description = "Skip a song!";
@@ -29,5 +29,3 @@ class SkipCommand implements Command {
     return;
   }
 }
-
-export default SkipCommand;

@@ -110,12 +110,12 @@ class Client extends discord_js_1.Client {
             console.log("🌀 Connecting to MongoDB Atlas...");
             yield this.connectToMongoDB();
             this.GUILD = this.guilds.cache.get("308024048967745536");
+            this.services = yield this.fetchServices();
+            console.log("Services loaded:", displayList(this.services));
             const { cmds, cmdsTmpl } = yield this.fetchCommands();
             this.commands = cmds;
             console.log("Commands loaded:", displayList(this.commands));
             yield this.refreshDiscordApplicationCommands(cmdsTmpl);
-            this.services = yield this.fetchServices();
-            console.log("Services loaded:", displayList(this.services));
         }));
         this.on("interactionCreate", (interaction) => __awaiter(this, void 0, void 0, function* () {
             var _c;

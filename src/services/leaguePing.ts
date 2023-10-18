@@ -21,11 +21,12 @@ interface GameInfo {
   playerReaction?: string;
   gameIcon?: string;
   maxPlayers: number;
+  keywords?: string[];
 }
 
-const gameInfo: Map<String, GameInfo> = new Map([
-  [
-    "379054265508823061",
+const gameInfo = {
+  
+    "379054265508823061":
     {
       id: "lolPing",
       name: "League of Legends",
@@ -45,10 +46,10 @@ const gameInfo: Map<String, GameInfo> = new Map([
         style: ButtonStyle.Secondary,
         custom_id: `lolPingNo`,
       }),
+      // keywords for League of Legends
+      keywords: [ "lol","league", "league of legends", "leagueoflegends"],
     },
-  ],
-  [
-    "1099120902341402744",
+    "1099120902341402744" :
     {
       id: "tftPing",
       name: "Team Fight Tactics",
@@ -59,20 +60,20 @@ const gameInfo: Map<String, GameInfo> = new Map([
       playerReaction: "<a:pengu:1099115708878700544>",
       buttonYes: new ButtonBuilder({
         label: "",
-        style: ButtonStyle.Success,
+        style: ButtonStyle.Primary,
         custom_id: `tftPingYes`,
         emoji: "<:tftArena:1099121711309406258>",
       }),
       buttonNo: new ButtonBuilder({
         label: "",
-        style: ButtonStyle.Danger,
+        style: ButtonStyle.Secondary,
         custom_id: `tftPingNo`,
         emoji: "<:tftL:1099122414249582713>",
       }),
+      // keywords for Team Fight Tactics
+      keywords: ["tft", "team fight tactics", "teamfighttactics"],
     },
-  ],
-  [
-    "843933198907736066",
+    "843933198907736066":
     {
       id: "valPing",
       name: "Valorant",
@@ -88,13 +89,13 @@ const gameInfo: Map<String, GameInfo> = new Map([
       }),
       buttonNo: new ButtonBuilder({
         label: "No",
-        style: ButtonStyle.Danger,
+        style: ButtonStyle.Secondary,
         custom_id: `valPingNo`,
       }),
+      // keywords for Valorant
+      keywords: [ "val", "valorant"],
     },
-  ],
-  [
-  "1070121180087988244",
+  "1070121180087988244":
     {
       id: "aramPing",
       name: "ARAM",
@@ -115,11 +116,10 @@ const gameInfo: Map<String, GameInfo> = new Map([
         custom_id: `aramPingNo`,
         emoji: "<a:poroL:1070125109429411910>",
       }),
+      // keywords for ARAM
+      keywords: ["aram", "arams", "aram ping", "aramping"],
     },
-  ],
-    
-  [
-    "889446083074330624",
+    "889446083074330624":
     {
       id: "mcPing",
       name: "Minecraft",
@@ -139,11 +139,10 @@ const gameInfo: Map<String, GameInfo> = new Map([
         style: ButtonStyle.Secondary,
         custom_id: `mcPingNo`,
       }),
+      // keywords for Minecraft
+      keywords: [ "mc","minecraft", "mine", "minecraf"],
     },
-  ],
-
-  [
-    "379054412875825154",
+    "379054412875825154":
     {
       id: "csgoPing",
       name: "Counter Strike: Global Offensive",
@@ -162,12 +161,35 @@ const gameInfo: Map<String, GameInfo> = new Map([
         style: ButtonStyle.Secondary,
         custom_id: `csgoPingNo`,
       }),
+      // keywords for Counter Strike: Global Offensive
+      keywords: ["csgo", "counter strike", "counterstrike", "counter strike global offensive", "counterstrikeglobaloffensive"],
     },
-  ],
-]);
+    "1162806426670993458":
+    {
+      id: "testPing",
+      name: "Test: Testing",
+      description: "Test",
+      role: "1162806426670993458",
+      maxPlayers: 2,
+      gameIcon: "<:csgo:1050371298209058816>",
+      playerReaction: ":flag_ru:",
+      buttonYes: new ButtonBuilder({
+        label: "yes",
+        style: ButtonStyle.Success,
+        custom_id: `testPingYes`,
+      }),
+      buttonNo: new ButtonBuilder({
+        label: "no",
+        style: ButtonStyle.Secondary,
+        custom_id: `testPingNo`,
+      }),
+      // keywords for Testing
+      keywords: ["test", "tst", "testing"],
+    }
+}
 
 class PingManager {
-  gameInfo: GameInfo;
+  readonly gameInfo: GameInfo;
   private actionRow: ActionRowBuilder<ButtonBuilder>;
   private members: Map<String, User> = new Map();
   private message?: Message = undefined;
@@ -259,20 +281,21 @@ class PingService implements Service {
   public online = false;
   private client!: Client;
   private pingManagers: Map<String, PingManager> = new Map();
+  readonly pingInfo = gameInfo;
 
   constructor(Client: Client) {
     this.online = true;
     this.client = Client;
 
     // create ping managers
-    for (let info of gameInfo) {
-      this.pingManagers.set(info[0], new PingManager(info[1], this.client));
+    for (let info in new Map(this.pingInfo)) {
+      this.pingManagers.set(info, new PingManager(this.pingInfo[`${info}`], this.client));
     }
 
     // on button interaction
     this.client.on("interactionCreate", async (interaction: Interaction) => {
       try {
-        if (!interaction.isButton()) return;
+        if(!interaction.isButton()) return;
         if(!interaction.customId.includes("Ping")) return;
 
         // loop through all ping managers

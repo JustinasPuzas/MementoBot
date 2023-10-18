@@ -3,7 +3,7 @@ import UserDb from "../dataBase/schemas/User";
 import Client from "../discordClient";
 import { Command } from "./helpers/interfaces";
 
-class PingCommand implements Command {
+export default class PingCommand implements Command {
   online = false;
   name = "ping";
   description = "Replies with Pong!";
@@ -18,5 +18,3 @@ class PingCommand implements Command {
     return;
   }
 }
-
-export default PingCommand;
