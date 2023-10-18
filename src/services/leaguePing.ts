@@ -11,21 +11,10 @@ import {
 import Client from "../discordClient";
 import { Service } from "./helpers/interfaces";
 
-interface GameInfo {
-  id: string;
-  name: string;
-  description: string;
-  role: string;
-  buttonYes: ButtonBuilder;
-  buttonNo: ButtonBuilder;
-  playerReaction?: string;
-  gameIcon?: string;
-  maxPlayers: number;
-  keywords?: string[];
-}
+type GamePingInfoIds = keyof typeof gamePingInfoList;
+type GamePingInfo = typeof gamePingInfoList[GamePingInfoIds];
 
-const gameInfo = {
-  
+const gamePingInfoList = {
     "379054265508823061":
     {
       id: "lolPing",
@@ -171,8 +160,8 @@ const gameInfo = {
       description: "Test",
       role: "1162806426670993458",
       maxPlayers: 2,
-      gameIcon: "<:csgo:1050371298209058816>",
-      playerReaction: ":flag_ru:",
+      gameIcon: "",
+      playerReaction: ":) ",
       buttonYes: new ButtonBuilder({
         label: "yes",
         style: ButtonStyle.Success,
@@ -180,23 +169,23 @@ const gameInfo = {
       }),
       buttonNo: new ButtonBuilder({
         label: "no",
-        style: ButtonStyle.Secondary,
+        style: ButtonStyle.Danger,
         custom_id: `testPingNo`,
       }),
       // keywords for Testing
       keywords: ["test", "tst", "testing"],
-    }
+    },
 }
 
 class PingManager {
-  readonly gameInfo: GameInfo;
+  readonly gameInfo: GamePingInfo;
   private actionRow: ActionRowBuilder<ButtonBuilder>;
   private members: Map<String, User> = new Map();
   private message?: Message = undefined;
   private client: Client;
   private interactions: Map<String, Function> = new Map();
 
-  constructor(gameInfo: GameInfo, client: Client) {
+  constructor(gameInfo: GamePingInfo, client: Client) {
     this.client = client;
     this.gameInfo = gameInfo;
     this.actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
@@ -281,15 +270,15 @@ class PingService implements Service {
   public online = false;
   private client!: Client;
   private pingManagers: Map<String, PingManager> = new Map();
-  readonly pingInfo = gameInfo;
+  readonly pingInfo = gamePingInfoList;
 
   constructor(Client: Client) {
     this.online = true;
     this.client = Client;
 
     // create ping managers
-    for (let info in new Map(this.pingInfo)) {
-      this.pingManagers.set(info, new PingManager(this.pingInfo[`${info}`], this.client));
+    for (let [id, role] of Object.entries(this.pingInfo)) {
+      this.pingManagers.set(id, new PingManager(role, this.client));
     }
 
     // on button interaction
@@ -312,7 +301,6 @@ class PingService implements Service {
     this.client.on("messageCreate", async (message: Message) => {
       if (!this.online) return;
       if (message.mentions.roles.size === 0) return;
-
       try {
         // loop through all role mentions and initiate ping managers
         for (let roleId of message.mentions.roles.keys()) {
