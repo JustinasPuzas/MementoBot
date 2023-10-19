@@ -217,7 +217,7 @@ class PingManager {
         new StringSelectMenuOptionBuilder()
           .setValue("120")
           .setLabel("Priparkuosiu Narkauskui mašiną")
-          .setDescription("2 valandos"),
+          .setDescription("2 valandos")
       );
     this.actionRows = [
       new ActionRowBuilder<
@@ -231,7 +231,10 @@ class PingManager {
 
   public async execute(message: Message, client: Client) {
     await this.reset();
-    this.members.set(message.author.id, { user: message.author, timestamp: Math.round(Date.now()/1000) });
+    this.members.set(message.author.id, {
+      user: message.author,
+      timestamp: Math.round(Date.now() / 1000),
+    });
     this.message = await message.channel.send({
       content: `**${this.gameInfo.gameIcon} ${this.gameInfo.name}**\n\t${this.gameInfo.playerReaction} ${message.author}`,
       components: this.actionRows,
@@ -240,13 +243,18 @@ class PingManager {
     // register functions
     this.interactions.set(`${this.gameInfo.id}Yes`, this.handleYesInteraction);
     this.interactions.set(`${this.gameInfo.id}No`, this.handleNoInteraction);
-    this.interactions.set(`${this.gameInfo.id}Select`, this.handleYesInteraction)
+    this.interactions.set(
+      `${this.gameInfo.id}Select`,
+      this.handleYesInteraction
+    );
   }
 
-  public async handleInteractions(interaction: ButtonInteraction | StringSelectMenuInteraction) {
+  public async handleInteractions(
+    interaction: ButtonInteraction | StringSelectMenuInteraction
+  ) {
     const func = this.interactions.get(interaction.customId);
     if (func) {
-      await func(interaction, Math.round(Date.now()/1000), this);
+      await func(interaction, Math.round(Date.now() / 1000), this);
     }
   }
 
@@ -255,11 +263,11 @@ class PingManager {
     timestamp: number,
     parent: PingManager
   ) {
-    if(interaction.isStringSelectMenu()){
-      timestamp += Number.parseInt(interaction.values[0]) * 60
+    if (interaction.isStringSelectMenu()) {
+      timestamp += Number.parseInt(interaction.values[0]) * 60;
     }
     const user = interaction.user;
-    parent.members.set(user.id, { user, timestamp});
+    parent.members.set(user.id, { user, timestamp });
     await parent.update(interaction);
   }
 
@@ -277,15 +285,22 @@ class PingManager {
     });
   }
 
-  public async update(interaction: ButtonInteraction | StringSelectMenuInteraction) {
+  public async update(
+    interaction: ButtonInteraction | StringSelectMenuInteraction
+  ) {
     let content = `**${this.gameInfo.gameIcon} ${this.gameInfo.name}**\n`;
     let counter = 1;
-
+    this.members = new Map(
+      [...this.members.entries()].sort(
+        (a, b) => a[1].timestamp - b[1].timestamp
+      )
+    );
     this.members.forEach((member, id) => {
       if (counter == this.gameInfo.maxPlayers + 1) content += "**Queue:** \n";
       content += `\t${this.gameInfo.playerReaction} <@${id}>`;
-      if(member.timestamp > Math.round(Date.now()/1000) + 60)
-      content += ` <t:${member.timestamp}:R>\n`
+      if (member.timestamp > Math.round(Date.now() / 1000) + 60)
+        content += ` <t:${member.timestamp}:R>`;
+      content += "\n"
       counter++;
     });
 
@@ -337,14 +352,16 @@ class PingService implements Service {
               continue;
             await manager.handleInteractions(interaction as ButtonInteraction);
           }
-        }else if (interaction.isStringSelectMenu()){
-          console.log(interaction.customId)
+        } else if (interaction.isStringSelectMenu()) {
+          console.log(interaction.customId);
           if (!interaction.customId.includes("Select")) return;
 
           for (let manager of this.pingManagers.values()) {
             if (interaction.customId.indexOf(manager.gameInfo.id) === -1)
               continue;
-            await manager.handleInteractions(interaction as StringSelectMenuInteraction);
+            await manager.handleInteractions(
+              interaction as StringSelectMenuInteraction
+            );
           }
         }
       } catch (e) {

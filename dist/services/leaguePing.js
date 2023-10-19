@@ -205,7 +205,10 @@ class PingManager {
     execute(message, client) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.reset();
-            this.members.set(message.author.id, { user: message.author, timestamp: Math.round(Date.now() / 1000) });
+            this.members.set(message.author.id, {
+                user: message.author,
+                timestamp: Math.round(Date.now() / 1000),
+            });
             this.message = yield message.channel.send({
                 content: `**${this.gameInfo.gameIcon} ${this.gameInfo.name}**\n\t${this.gameInfo.playerReaction} ${message.author}`,
                 components: this.actionRows,
@@ -249,12 +252,14 @@ class PingManager {
         return __awaiter(this, void 0, void 0, function* () {
             let content = `**${this.gameInfo.gameIcon} ${this.gameInfo.name}**\n`;
             let counter = 1;
+            this.members = new Map([...this.members.entries()].sort((a, b) => a[1].timestamp - b[1].timestamp));
             this.members.forEach((member, id) => {
                 if (counter == this.gameInfo.maxPlayers + 1)
                     content += "**Queue:** \n";
                 content += `\t${this.gameInfo.playerReaction} <@${id}>`;
                 if (member.timestamp > Math.round(Date.now() / 1000) + 60)
-                    content += ` <t:${member.timestamp}:R>\n`;
+                    content += ` <t:${member.timestamp}:R>`;
+                content += "\n";
                 counter++;
             });
             if (this.members.size === 0)
