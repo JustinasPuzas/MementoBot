@@ -141,7 +141,13 @@ const gamePingInfoList = {
             custom_id: `csgoPingNo`,
         }),
         // keywords for Counter Strike: Global Offensive
-        keywords: ["csgo", "counter strike", "counterstrike", "counter strike global offensive", "counterstrikeglobaloffensive"],
+        keywords: [
+            "csgo",
+            "counter strike",
+            "counterstrike",
+            "counter strike global offensive",
+            "counterstrikeglobaloffensive",
+        ],
     },
     "1162806426670993458": {
         id: "testPing",
@@ -172,38 +178,64 @@ class PingManager {
         this.interactions = new Map();
         this.client = client;
         this.gameInfo = gameInfo;
-        this.actionRow = new discord_js_1.ActionRowBuilder().addComponents(this.gameInfo.buttonYes, this.gameInfo.buttonNo);
+        const selectMenu = new discord_js_1.StringSelectMenuBuilder()
+            .setCustomId(this.gameInfo.id + "Select")
+            .setPlaceholder("Palauk")
+            .setOptions(new discord_js_1.StringSelectMenuOptionBuilder()
+            .setValue("5")
+            .setLabel("Pasmaukysiu")
+            .setDescription("5 minutės"), new discord_js_1.StringSelectMenuOptionBuilder()
+            .setValue("10")
+            .setLabel("Išplausiu indus")
+            .setDescription("10 minučių"), new discord_js_1.StringSelectMenuOptionBuilder()
+            .setValue("30")
+            .setLabel("Einu į dušą")
+            .setDescription("30 minučių"), new discord_js_1.StringSelectMenuOptionBuilder()
+            .setValue("60")
+            .setLabel("Šiku")
+            .setDescription("60 minučių"), new discord_js_1.StringSelectMenuOptionBuilder()
+            .setValue("120")
+            .setLabel("Priparkuosiu Narkauskui mašiną")
+            .setDescription("2 valandos"));
+        this.actionRows = [
+            new discord_js_1.ActionRowBuilder().addComponents(this.gameInfo.buttonYes, this.gameInfo.buttonNo),
+            new discord_js_1.ActionRowBuilder().addComponents(selectMenu),
+        ];
     }
     execute(message, client) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.reset();
-            this.members.set(message.author.id, message.author);
+            this.members.set(message.author.id, { user: message.author, timestamp: Math.round(Date.now() / 1000) });
             this.message = yield message.channel.send({
                 content: `**${this.gameInfo.gameIcon} ${this.gameInfo.name}**\n\t${this.gameInfo.playerReaction} ${message.author}`,
-                components: [this.actionRow],
+                components: this.actionRows,
             });
             // register functions
             this.interactions.set(`${this.gameInfo.id}Yes`, this.handleYesInteraction);
             this.interactions.set(`${this.gameInfo.id}No`, this.handleNoInteraction);
+            this.interactions.set(`${this.gameInfo.id}Select`, this.handleYesInteraction);
         });
     }
     handleInteractions(interaction) {
         return __awaiter(this, void 0, void 0, function* () {
             const func = this.interactions.get(interaction.customId);
             if (func) {
-                yield func(interaction, this);
+                yield func(interaction, Math.round(Date.now() / 1000), this);
             }
         });
     }
-    handleYesInteraction(interaction, parent) {
+    handleYesInteraction(interaction, timestamp, parent) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (interaction.isStringSelectMenu()) {
+                timestamp += Number.parseInt(interaction.values[0]) * 60;
+            }
             const user = interaction.user;
-            parent.members.set(user.id, user);
+            parent.members.set(user.id, { user, timestamp });
             yield parent.update(interaction);
         });
     }
     //exported function
-    handleNoInteraction(interaction, parent) {
+    handleNoInteraction(interaction, timestamp, parent) {
         return __awaiter(this, void 0, void 0, function* () {
             if (parent.members.delete(interaction.user.id))
                 return parent.update(interaction);
@@ -217,10 +249,12 @@ class PingManager {
         return __awaiter(this, void 0, void 0, function* () {
             let content = `**${this.gameInfo.gameIcon} ${this.gameInfo.name}**\n`;
             let counter = 1;
-            this.members.forEach((id, user) => {
+            this.members.forEach((member, id) => {
                 if (counter == this.gameInfo.maxPlayers + 1)
                     content += "**Queue:** \n";
-                content += `\t${this.gameInfo.playerReaction} <@${user}>\n`;
+                content += `\t${this.gameInfo.playerReaction} <@${id}>`;
+                if (member.timestamp > Math.round(Date.now() / 1000) + 60)
+                    content += ` <t:${member.timestamp}:R>\n`;
                 counter++;
             });
             if (this.members.size === 0)
@@ -260,15 +294,25 @@ class PingService {
         // on button interaction
         this.client.on("interactionCreate", (interaction) => __awaiter(this, void 0, void 0, function* () {
             try {
-                if (!interaction.isButton())
-                    return;
-                if (!interaction.customId.includes("Ping"))
-                    return;
-                // loop through all ping managers
-                for (let manager of this.pingManagers.values()) {
-                    if (interaction.customId.indexOf(manager.gameInfo.id) === -1)
-                        continue;
-                    yield manager.handleInteractions(interaction);
+                if (interaction.isButton()) {
+                    if (!interaction.customId.includes("Ping"))
+                        return;
+                    // loop through all ping managers
+                    for (let manager of this.pingManagers.values()) {
+                        if (interaction.customId.indexOf(manager.gameInfo.id) === -1)
+                            continue;
+                        yield manager.handleInteractions(interaction);
+                    }
+                }
+                else if (interaction.isStringSelectMenu()) {
+                    console.log(interaction.customId);
+                    if (!interaction.customId.includes("Select"))
+                        return;
+                    for (let manager of this.pingManagers.values()) {
+                        if (interaction.customId.indexOf(manager.gameInfo.id) === -1)
+                            continue;
+                        yield manager.handleInteractions(interaction);
+                    }
                 }
             }
             catch (e) {
