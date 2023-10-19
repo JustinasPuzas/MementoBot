@@ -236,7 +236,7 @@ class PingManager {
       timestamp: Math.round(Date.now() / 1000),
     });
     this.message = await message.channel.send({
-      content: `**${this.gameInfo.gameIcon} ${this.gameInfo.name}**\n\t${this.gameInfo.playerReaction} ${message.author}`,
+      content: `# ${this.gameInfo.gameIcon} ${this.gameInfo.name} \n\t${this.gameInfo.playerReaction} ${message.author}`,
       components: this.actionRows,
     });
 
@@ -288,7 +288,7 @@ class PingManager {
   public async update(
     interaction: ButtonInteraction | StringSelectMenuInteraction
   ) {
-    let content = `**${this.gameInfo.gameIcon} ${this.gameInfo.name}**\n`;
+    let content = `## ${this.gameInfo.gameIcon} ${this.gameInfo.name}\n`;
     let counter = 1;
     this.members = new Map(
       [...this.members.entries()].sort(

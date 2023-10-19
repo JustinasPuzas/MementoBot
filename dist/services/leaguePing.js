@@ -210,7 +210,7 @@ class PingManager {
                 timestamp: Math.round(Date.now() / 1000),
             });
             this.message = yield message.channel.send({
-                content: `**${this.gameInfo.gameIcon} ${this.gameInfo.name}**\n\t${this.gameInfo.playerReaction} ${message.author}`,
+                content: `# ${this.gameInfo.gameIcon} ${this.gameInfo.name} \n\t${this.gameInfo.playerReaction} ${message.author}`,
                 components: this.actionRows,
             });
             // register functions
@@ -250,7 +250,7 @@ class PingManager {
     }
     update(interaction) {
         return __awaiter(this, void 0, void 0, function* () {
-            let content = `**${this.gameInfo.gameIcon} ${this.gameInfo.name}**\n`;
+            let content = `## ${this.gameInfo.gameIcon} ${this.gameInfo.name}\n`;
             let counter = 1;
             this.members = new Map([...this.members.entries()].sort((a, b) => a[1].timestamp - b[1].timestamp));
             this.members.forEach((member, id) => {
