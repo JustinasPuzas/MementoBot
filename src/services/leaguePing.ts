@@ -172,8 +172,7 @@ const gamePingInfoList = {
       custom_id: `rustPingYes`,
     }),
     buttonNo: new ButtonBuilder({
-      label: "",
-      emoji: "�",
+      label: "nay",
       style: ButtonStyle.Secondary,
       custom_id: `rustPingNo`,
     }),

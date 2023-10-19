@@ -163,8 +163,7 @@ const gamePingInfoList = {
             custom_id: `rustPingYes`,
         }),
         buttonNo: new discord_js_1.ButtonBuilder({
-            label: "",
-            emoji: "�",
+            label: "nay",
             style: discord_js_1.ButtonStyle.Secondary,
             custom_id: `rustPingNo`,
         }),
