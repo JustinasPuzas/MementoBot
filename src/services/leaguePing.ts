@@ -158,6 +158,30 @@ const gamePingInfoList = {
       "counterstrikeglobaloffensive",
     ],
   },
+  "1164677139933704303": {
+    id: "rustPing",
+    name: "RUST",
+    description: "RUST Ping Manager",
+    role: "1164677139933704303",
+    maxPlayers: 5,
+    gameIcon: "<:rust:1164678368105607299>",
+    playerReaction: "<:kurwaRaketa:1164680791830319154>",
+    buttonYes: new ButtonBuilder({
+      label: "Let's Roll",
+      style: ButtonStyle.Success,
+      custom_id: `rustPingYes`,
+    }),
+    buttonNo: new ButtonBuilder({
+      label: "",
+      emoji: "�",
+      style: ButtonStyle.Secondary,
+      custom_id: `rustPingNo`,
+    }),
+    // keywords for Counter Strike: Global Offensive
+    keywords: [
+      "rust",
+    ],
+  },
   "1162806426670993458": {
     id: "testPing",
     name: "Test: Testing",
