@@ -9,7 +9,6 @@ import {
 } from "discord.js";
 import * as dotenv from "dotenv";
 import mongoose from "mongoose";
-import PingCommand from "./commands/ping";
 import fs from "fs/promises";
 import { Command } from "./commands/helpers/interfaces";
 import { Service } from "./services/helpers/interfaces";
@@ -109,10 +108,11 @@ export default class Client extends DiscordClient {
   private fetchCommands = async () => {
     const cmds: Map<string, Command> = new Map();
     const cmdsTmpl = [];
-    const commandFiles = await fs.readdir(__dirname + "/commands");
+    const commandFiles = await fs.readdir(__dirname + "/commands" ,{withFileTypes: true});
 
     for (let commandFile of commandFiles) {
-      const command = await import(`${__dirname}/commands/${commandFile}`);
+      if(commandFile.isDirectory()) continue;
+      const command = await import(`${__dirname}/commands/${commandFile.name}`);
       const cmd: Command = new command.default();
       if (!cmd.online) continue;
       cmds.set(cmd.name, cmd);
@@ -125,10 +125,11 @@ export default class Client extends DiscordClient {
 
   private fetchServices = async () => {
     const services: Map<string, Service> = new Map();
-
-    const servicesFiles = await fs.readdir(__dirname + "/services");
+    const servicesFiles = await fs.readdir(__dirname + "/services", {withFileTypes: true});
     for (let service of servicesFiles) {
-      const serviceClass = await import(`${__dirname}/services/${service}`);
+      if(service.isDirectory()) continue
+      const serviceClass = await import(`${__dirname}\\services\\${service.name}`);
+      if (!serviceClass) continue;
       const serviceInstance: Service = new serviceClass.default(this);
       if (serviceInstance.online)
         services.set(serviceInstance.name, serviceInstance);
