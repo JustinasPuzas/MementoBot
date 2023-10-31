@@ -174,9 +174,7 @@ const gamePingInfoList = {
       custom_id: `rustPingNo`,
     }),
     // keywords for Counter Strike: Global Offensive
-    keywords: [
-      "rust",
-    ],
+    keywords: ["rust"],
   },
   "1162806426670993458": {
     id: "testPing",
@@ -308,7 +306,10 @@ class PingManager {
   public async update(
     interaction: ButtonInteraction | StringSelectMenuInteraction
   ) {
-    let content = this.members.size == 1? `## ${this.gameInfo.gameIcon} ${this.gameInfo.name}\n`: `### ${this.gameInfo.gameIcon} ${this.gameInfo.name}\n`;
+    let content =
+      this.members.size == 1
+        ? `## ${this.gameInfo.gameIcon} ${this.gameInfo.name}\n`
+        : `### ${this.gameInfo.gameIcon} ${this.gameInfo.name}\n`;
     let counter = 1;
 
     this.members = new Map(
@@ -322,11 +323,12 @@ class PingManager {
       content += `\t${this.gameInfo.playerReaction} <@${id}>`;
       if (member.timestamp > Math.round(Date.now() / 1000) + 60)
         content += ` <t:${member.timestamp}:R>`;
-      content += "\n"
+      content += "\n";
       counter++;
     });
 
-    if (this.members.size === 0) content = `# ${this.gameInfo.gameIcon} ${this.gameInfo.name}`;
+    if (this.members.size === 0)
+      content = `# ${this.gameInfo.gameIcon} ${this.gameInfo.name}`;
 
     await interaction.update({ content });
   }

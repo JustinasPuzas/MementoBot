@@ -108,10 +108,12 @@ export default class Client extends DiscordClient {
   private fetchCommands = async () => {
     const cmds: Map<string, Command> = new Map();
     const cmdsTmpl = [];
-    const commandFiles = await fs.readdir(__dirname + "/commands" ,{withFileTypes: true});
+    const commandFiles = await fs.readdir(__dirname + "/commands", {
+      withFileTypes: true,
+    });
 
     for (let commandFile of commandFiles) {
-      if(commandFile.isDirectory()) continue;
+      if (commandFile.isDirectory()) continue;
       const command = await import(`${__dirname}/commands/${commandFile.name}`);
       const cmd: Command = new command.default();
       if (!cmd.online) continue;
@@ -125,10 +127,14 @@ export default class Client extends DiscordClient {
 
   private fetchServices = async () => {
     const services: Map<string, Service> = new Map();
-    const servicesFiles = await fs.readdir(__dirname + "/services", {withFileTypes: true});
+    const servicesFiles = await fs.readdir(__dirname + "/services", {
+      withFileTypes: true,
+    });
     for (let service of servicesFiles) {
-      if(service.isDirectory()) continue
-      const serviceClass = await import(`${__dirname}\\services\\${service.name}`);
+      if (service.isDirectory()) continue;
+      const serviceClass = await import(
+        `${__dirname}\\services\\${service.name}`
+      );
       if (!serviceClass) continue;
       const serviceInstance: Service = new serviceClass.default(this);
       if (serviceInstance.online)

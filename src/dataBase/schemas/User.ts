@@ -1,4 +1,4 @@
-import mongoose, {model, Schema, ObjectId } from "mongoose";
+import mongoose, { model, Schema, ObjectId } from "mongoose";
 
 interface IUser {
   discordId: string;
@@ -13,7 +13,6 @@ const userSchema = new Schema<IUser>({
   leagueOfLegendsNickName: { type: String, required: false },
 });
 
-
-const UserDb = model<IUser>('User', userSchema);
+const UserDb = model<IUser>("User", userSchema);
 
 export default UserDb;

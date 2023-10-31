@@ -13,7 +13,7 @@ export default class PingCommand implements Command {
   };
 
   async execute(interaction: CommandInteraction, client: Client) {
-    const usr = await UserDb.findOne({discordId: interaction.user.id})
+    const usr = await UserDb.findOne({ discordId: interaction.user.id });
     await interaction.reply(`ss`);
     return;
   }

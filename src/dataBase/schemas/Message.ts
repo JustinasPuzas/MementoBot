@@ -1,5 +1,5 @@
 import { AnyAPIActionRowComponent, DiscordAPIError, Message } from "discord.js";
-import mongoose, {model, Schema, ObjectId } from "mongoose";
+import mongoose, { model, Schema, ObjectId } from "mongoose";
 
 interface IMessage {
   authorId: string;
@@ -15,11 +15,10 @@ const userSchema = new Schema<IMessage>({
   messageId: { type: String, required: true },
   content: { type: String, required: false },
   message: { type: JSON, required: true },
-  deleted: { type: Boolean, required: true, default: false},
+  deleted: { type: Boolean, required: true, default: false },
   edits: { type: Array<JSON>, required: false },
 });
 
-
-const MessageDb = model<IMessage>('Message', userSchema);
+const MessageDb = model<IMessage>("Message", userSchema);
 
 export default MessageDb;
