@@ -9,13 +9,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^18.7.18",
     "discord.js": "^14.9.0",
     "dotenv": "^16.0.2",
-    "fast-average-color-node": "^2.6.0",
-    "get-average-color": "^0.0.6",
-    "mongoose": "^6.6.1",
-    "op.gg-api": "^2.0.5-alpha",
-    "twisted": "^1.49.0"
+    "mongoose": "^6.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.10",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   }
 }
