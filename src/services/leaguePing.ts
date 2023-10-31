@@ -5,12 +5,9 @@ import {
   ButtonBuilder,
   ButtonInteraction,
   ButtonStyle,
-  GuildMember,
   Interaction,
   Message,
   User,
-  SelectMenuOptionBuilder,
-  RoleSelectMenuBuilder,
   StringSelectMenuInteraction,
 } from "discord.js";
 import Client from "../discordClient";

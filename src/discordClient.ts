@@ -12,7 +12,6 @@ import mongoose from "mongoose";
 import PingCommand from "./commands/ping";
 import fs from "fs/promises";
 import { Command } from "./commands/helpers/interfaces";
-import RiotClient from "./leagueClient";
 import { Service } from "./services/helpers/interfaces";
 
 const displayList = (list: Map<string, any>) => {
@@ -30,9 +29,8 @@ export default class Client extends DiscordClient {
   public commands!: Map<string, Command>;
   public commandTemplates!: any[];
   public services!: Map<string, Service>;
-  public riotClient?: RiotClient;
   public GUILD!: Guild;
-  constructor(options: ClientOptions, riotClient?: RiotClient) {
+  constructor(options: ClientOptions) {
     super(options);
 
     this.on("ready", async () => {

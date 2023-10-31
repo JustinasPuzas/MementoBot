@@ -2,7 +2,6 @@ import { Client as DiscordClient, GatewayIntentBits } from "discord.js";
 import * as dotenv from "dotenv";
 
 import Client from "./discordClient";
-import RiotClient from "./leagueClient";
 
 dotenv.config();
 
