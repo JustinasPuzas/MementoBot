@@ -3,3 +3,4 @@
 .vscode/
 .prettierrc
 contabo.bat
+/dist/
