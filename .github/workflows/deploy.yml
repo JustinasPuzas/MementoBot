@@ -18,6 +18,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           script:
-            cd /discord/MementoBot #
-            git pull # pull changes
-            npm install # install missing libs
+            cd /discord/MementoBot
+            git pull
+            npm install
