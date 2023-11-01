@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+// const userSchema = new Schema<IMessage>({
+//   authorId: { type: String, required: true },
+//   messageId: { type: String, required: true },
+//   content: { type: String, required: false },
+//   message: { type: JSON, required: true },
+//   deleted: { type: Boolean, required: true, default: false },
+//   edits: { type: Array<JSON>, required: false },
+// });
+
+model Message {
+  id                    String              @id @default(auto()) @map("_id") @db.ObjectId
+  author                User                @relation(fields: [authorId], references: [id])
+  authorId              String              @db.ObjectId
+  messageId             String              @unique
+  content               String
+  deleted               Boolean
+  edits                 Json[]
+}     
+
+model User {      
+  id                    String              @id @default(auto()) @map("_id") @db.ObjectId
+  email                 String
+  // One to many
+  messages              Message[]
+  // One to One
+  customSettings        CustomSettings?
+}
+
+model CustomSettings {
+  // Settings     
+  id                    String              @id @default(auto()) @map("_id") @db.ObjectId
+  user                  User                @relation(fields: [userId], references: [id])
+  userId                String              @db.ObjectId @unique
+  // One to many
+  pingSettings          PingSettings[]
+}     
+
+model PingSettings {      
+  id                    String              @id @default(auto()) @map("_id") @db.ObjectId
+  customSettings        CustomSettings      @relation(fields: [customSettingsId], references: [id])
+  customSettingsId      String              @db.ObjectId
+  gameName              String
+  emotes                String
+} 
