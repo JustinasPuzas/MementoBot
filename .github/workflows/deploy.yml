@@ -17,7 +17,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          script:
-            cd /discord/MementoBot
-            git pull
+          script: |
+            cd /discord/MementoBot &&
+            git pull &&
             npm install
