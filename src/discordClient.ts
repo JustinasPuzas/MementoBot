@@ -12,6 +12,7 @@ import mongoose from "mongoose";
 import fs from "fs/promises";
 import { Command } from "./commands/helpers/interfaces";
 import { Service } from "./services/helpers/interfaces";
+import path from "node:path";
 
 const displayList = (list: Map<string, any>) => {
   if (list.size > 0) {
@@ -108,13 +109,13 @@ export default class Client extends DiscordClient {
   private fetchCommands = async () => {
     const cmds: Map<string, Command> = new Map();
     const cmdsTmpl = [];
-    const commandFiles = await fs.readdir(__dirname + "/commands", {
+    const commandFiles = await fs.readdir(path.join(__dirname, "commands"),{
       withFileTypes: true,
     });
 
     for (let commandFile of commandFiles) {
       if (commandFile.isDirectory()) continue;
-      const command = await import(`${__dirname}/commands/${commandFile.name}`);
+      const command = await import( path.join(__dirname,"commands",commandFile.name));
       const cmd: Command = new command.default();
       if (!cmd.online) continue;
       cmds.set(cmd.name, cmd);
@@ -127,14 +128,12 @@ export default class Client extends DiscordClient {
 
   private fetchServices = async () => {
     const services: Map<string, Service> = new Map();
-    const servicesFiles = await fs.readdir(__dirname + "/services", {
+    const servicesFiles = await fs.readdir( path.join(__dirname, "services"), {
       withFileTypes: true,
     });
     for (let service of servicesFiles) {
       if (service.isDirectory()) continue;
-      const serviceClass = await import(
-        `${__dirname}\\services\\${service.name}`
-      );
+      const serviceClass = await import( path.join(__dirname, "services", service.name));
       if (!serviceClass) continue;
       const serviceInstance: Service = new serviceClass.default(this);
       if (serviceInstance.online)
