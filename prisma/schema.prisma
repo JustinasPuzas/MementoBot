@@ -22,16 +22,18 @@ datasource db {
 
 model Message {
   id                    String              @id @default(auto()) @map("_id") @db.ObjectId
-  author                User                @relation(fields: [authorId], references: [id])
-  authorId              String              @db.ObjectId
+  author                User                @relation(fields: [authorId], references: [discordId])
+  authorId              String              @db.String
+  message               Json
   messageId             String              @unique
-  content               String
-  deleted               Boolean
-  edits                 Json[]
+  content               String              @default("")
+  deleted               Boolean             @default(false)
+  edits                 Json[]              @default([])
 }     
 
 model User {      
   id                    String              @id @default(auto()) @map("_id") @db.ObjectId
+  discordId             String              @db.String @unique
   email                 String
   // One to many
   messages              Message[]
@@ -53,5 +55,5 @@ model PingSettings {
   customSettings        CustomSettings      @relation(fields: [customSettingsId], references: [id])
   customSettingsId      String              @db.ObjectId
   gameName              String
-  emotes                String
+  emote                 String
 } 

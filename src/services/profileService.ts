@@ -3,6 +3,7 @@ import Client from "../discordClient";
 import { EmbedBuilder, GuildMember, Message, PartialMessage } from "discord.js";
 import MessageDb from "../dataBase/schemas/Message";
 import UserDb from "../dataBase/schemas/User";
+import { prisma } from "../index";
 
 class profileService implements Service {
   name: string = "Profile Service";
@@ -16,11 +17,13 @@ class profileService implements Service {
     this.client.on("messageCreate", async (message: Message) => {
       if (!this.online) return;
       if (message.author.bot) return;
-      await MessageDb.create({
-        authorId: message.author.id,
-        messageId: message.id,
-        content: message.content,
-        message: message.toJSON(),
+      await prisma.message.create({
+        data: {
+          authorId: message.author.id,
+          messageId: message.id,
+          content: message.content,
+          message: message.toString(),
+        },
       });
     });
 
