@@ -71,10 +71,14 @@ class profileService implements Service {
         if (!this.online) return;
         if (message.author?.bot) return;
         try {
-          await MessageDb.findOneAndUpdate(
-            { messageId: message.id },
-            { deleted: true }
-          );
+          await prisma.message.update({
+            where: {
+              messageId: message.id
+            },
+            data: {
+              deleted: true
+            }
+          })
         } catch (e) {
           console.log(e);
         }
