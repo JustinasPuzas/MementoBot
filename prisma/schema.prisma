@@ -25,7 +25,8 @@ model Message {
   author                User                @relation(fields: [authorId], references: [discordId])
   authorId              String              @db.String
   message               Json
-  messageId             String              @unique
+  message_id            String              @unique
+  messageId             String
   content               String              @default("")
   deleted               Boolean             @default(false)
   edits                 Json[]              @default([])
