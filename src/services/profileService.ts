@@ -22,36 +22,43 @@ class profileService implements Service {
           authorId: message.author.id,
           messageId: message.id,
           content: message.content,
-          message: message.toString(),
+          message: message.toJSON() as any,
         },
       });
     });
 
     this.client.on("messageUpdate", async (oldMessage, newMessage) => {
-      // add massage to edits array
       console.log("message updated");
       if (!this.online) return;
       oldMessage = await oldMessage.fetch();
       newMessage = await newMessage.fetch();
       if (newMessage.author.bot) return;
       try {
-        await MessageDb.findOneAndUpdate(
-          { messageId: newMessage.id },
-          { content: newMessage.content },
-          { $push: { edits: newMessage.toJSON() } }
-        );
+        const update = await prisma.message.update({
+          where: {
+            messageId: newMessage.id,
+          },
+          data: {
+            content: newMessage.content,
+            edits: { push: newMessage.toJSON() as any },
+          },
+          
+        });
+        console.log(update)
         return;
       } catch (e) {
         console.log(e);
       }
       try {
-        await MessageDb.create({
-          authorId: newMessage.author.id,
-          messageId: newMessage.id,
-          content: oldMessage.content,
-          message: oldMessage.toJSON(),
-          edits: [newMessage.toJSON()],
-        });
+        prisma.message.create({
+          data:{
+            authorId: newMessage.author.id,
+            messageId: newMessage.id,
+            content: oldMessage.content,
+            message: oldMessage.toJSON() as any,
+            edits: [newMessage.toJSON() as any],
+          }
+        })
         return;
       } catch (e) {
         console.log(e);
