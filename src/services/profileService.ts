@@ -17,14 +17,18 @@ class profileService implements Service {
     this.client.on("messageCreate", async (message: Message) => {
       if (!this.online) return;
       if (message.author.bot) return;
-      await prisma.message.create({
-        data: {
-          authorId: message.author.id,
-          messageId: message.id,
-          content: message.content,
-          message: message.toJSON() as any,
-        },
-      });
+      try{
+        await prisma.message.create({
+          data: {
+            authorId: message.author.id,
+            messageId: message.id,
+            content: message.content,
+            message: message.toJSON() as any,
+          },
+        });
+      }catch (e){
+        console.log(e)
+      }
     });
 
     this.client.on("messageUpdate", async (oldMessage, newMessage) => {
@@ -34,7 +38,7 @@ class profileService implements Service {
       newMessage = await newMessage.fetch();
       if (newMessage.author.bot) return;
       try {
-        const update = await prisma.message.update({
+        await prisma.message.update({
           where: {
             messageId: newMessage.id,
           },
@@ -44,7 +48,6 @@ class profileService implements Service {
           },
           
         });
-        console.log(update)
         return;
       } catch (e) {
         console.log(e);
