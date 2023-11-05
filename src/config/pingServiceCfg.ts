@@ -160,25 +160,25 @@ export const pingServiceCfg = {
       // keywords for Counter Strike: Global Offensive
       keywords: ["rust"],
     },
-    "1162806426670993458": {
-      id: "testPing",
-      name: "Test: Testing",
-      description: "Test",
-      role: "1162806426670993458",
-      maxPlayers: 2,
-      gameIcon: "",
-      playerReaction: ":)",
-      buttonYes: new ButtonBuilder({
-        label: "yes",
-        style: ButtonStyle.Success,
-        custom_id: `testPingYes`,
-      }),
-      buttonNo: new ButtonBuilder({
-        label: "no",
-        style: ButtonStyle.Danger,
-        custom_id: `testPingNo`,
-      }),
-      // keywords for Testing
-      keywords: ["test", "tst", "testing"],
-    },
+    // "1162806426670993458": {
+    //   id: "testPing",
+    //   name: "Test: Testing",
+    //   description: "Test",
+    //   role: "1162806426670993458",
+    //   maxPlayers: 2,
+    //   gameIcon: "",
+    //   playerReaction: ":)",
+    //   buttonYes: new ButtonBuilder({
+    //     label: "yes",
+    //     style: ButtonStyle.Success,
+    //     custom_id: `testPingYes`,
+    //   }),
+    //   buttonNo: new ButtonBuilder({
+    //     label: "no",
+    //     style: ButtonStyle.Danger,
+    //     custom_id: `testPingNo`,
+    //   }),
+    //   // keywords for Testing
+    //   keywords: ["test", "tst", "testing"],
+    // },
   };
