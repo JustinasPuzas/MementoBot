@@ -167,7 +167,7 @@ export const pingServiceCfg = {
       role: "1162806426670993458",
       maxPlayers: 2,
       gameIcon: "",
-      playerReaction: ":) ",
+      playerReaction: ":)",
       buttonYes: new ButtonBuilder({
         label: "yes",
         style: ButtonStyle.Success,

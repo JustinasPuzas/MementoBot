@@ -13,6 +13,7 @@ import {
 import Client from "../discordClient";
 import { Service } from "./helpers/interfaces";
 import { pingServiceCfg } from "../config/pingServiceCfg"
+import { prisma } from "..";
 
 type GamePingInfoIds = keyof typeof pingServiceCfg;
 type GamePingInfo = (typeof pingServiceCfg)[GamePingInfoIds];
@@ -22,7 +23,7 @@ class PingManager {
   private actionRows: ActionRowBuilder<
     ButtonBuilder | StringSelectMenuBuilder
   >[];
-  private members: Map<String, { user: User; timestamp: number }> = new Map();
+  private members: Map<String, { user: User; timestamp: number, playerReaction: string | undefined }> = new Map();
   private message?: Message = undefined;
   private client: Client;
   private interactions: Map<String, Function> = new Map();
@@ -66,13 +67,21 @@ class PingManager {
   }
 
   public async execute(message: Message, client: Client) {
-    await this.reset();
+    this.reset();
+    let playerReaction = await prisma.pingSettings.findFirst({
+      where: {
+        gameName: this.gameInfo.role,
+        userId: message.author.id
+      }
+    })
+
     this.members.set(message.author.id, {
       user: message.author,
       timestamp: Math.round(Date.now() / 1000),
+      playerReaction: playerReaction?.emote ?? undefined
     });
     this.message = await message.channel.send({
-      content: `## ${this.gameInfo.gameIcon} ${this.gameInfo.name} \n\t${this.gameInfo.playerReaction} ${message.author}`,
+      content: `## ${this.gameInfo.gameIcon} ${this.gameInfo.name} \n\t${playerReaction?.emote ?? this.gameInfo.playerReaction} ${message.author}`,
       components: this.actionRows,
     });
 
@@ -103,8 +112,14 @@ class PingManager {
       timestamp += Number.parseInt(interaction.values[0]) * 60;
     }
     const user = interaction.user;
-    parent.members.set(user.id, { user, timestamp });
-    await parent.update(interaction);
+    const playerReaction = await prisma.pingSettings.findFirst({
+      where: {
+        gameName: parent.gameInfo.role,
+        userId: user.id
+      }
+    })
+    parent.members.set(user.id, { user, timestamp, playerReaction: playerReaction?.emote ?? undefined });
+    await parent.update(interaction, parent);
   }
 
   //exported function
@@ -114,7 +129,7 @@ class PingManager {
     parent: PingManager
   ) {
     if (parent.members.delete(interaction.user.id))
-      return parent.update(interaction);
+      return parent.update(interaction, parent);
     await interaction.reply({
       content: "Nu ir eik Nxj niekam nerrupi atsiciuhink",
       ephemeral: true,
@@ -122,7 +137,8 @@ class PingManager {
   }
 
   public async update(
-    interaction: ButtonInteraction | StringSelectMenuInteraction
+    interaction: ButtonInteraction | StringSelectMenuInteraction,
+    parent: PingManager
   ) {
     let content =
       this.members.size == 1
@@ -138,7 +154,7 @@ class PingManager {
 
     this.members.forEach((member, id) => {
       if (counter == this.gameInfo.maxPlayers + 1) content += "**Queue:** \n";
-      content += `\t${this.gameInfo.playerReaction} <@${id}>`;
+      content += `\t${member.playerReaction ??  parent.gameInfo.playerReaction} <@${id}>`;
       if (member.timestamp > Math.round(Date.now() / 1000) + 60)
         content += ` <t:${member.timestamp}:R>`;
       content += "\n";
@@ -151,12 +167,12 @@ class PingManager {
     await interaction.update({ content });
   }
 
-  private async reset() {
+  private reset() {
     // remove all active buttons
     try {
       this.interactions.clear();
       this.members = new Map();
-      await this.message?.delete();
+      this.message?.delete();
     } catch (e) {
       console.log(e);
     }
