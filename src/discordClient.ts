@@ -34,9 +34,6 @@ export default class Client extends DiscordClient {
     super(options);
 
     this.on("ready", async () => {
-      console.log("🌀 Connecting to MongoDB Atlas...");
-      await this.connectToMongoDB();
-
       this.GUILD = this.guilds.cache.get("308024048967745536") as Guild;
 
       this.services = await this.fetchServices();
@@ -48,7 +45,7 @@ export default class Client extends DiscordClient {
 
       await this.refreshDiscordApplicationCommands(cmdsTmpl);
     });
-
+    
     this.on("interactionCreate", async (interaction) => {
       if (!interaction.user) return;
       if (!interaction.isChatInputCommand()) return;
@@ -73,16 +70,6 @@ export default class Client extends DiscordClient {
 
     this.login(process.env.DISCORD_BOT_TOKEN);
   }
-
-  // connect to MongoDB
-  private connectToMongoDB = async () => {
-    try {
-      await mongoose.connect(`${process.env.DB_CONN_STRING}`);
-      console.log("✅ Connected to MongoDB Atlas");
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   // update discord application commands
   private refreshDiscordApplicationCommands = async (
@@ -126,6 +113,7 @@ export default class Client extends DiscordClient {
     return { cmds, cmdsTmpl };
   };
 
+  // fetch services from services folder
   private fetchServices = async () => {
     const services: Map<string, Service> = new Map();
     const servicesFiles = await fs.readdir( path.join(__dirname, "services"), {

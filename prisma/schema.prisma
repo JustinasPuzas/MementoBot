@@ -37,23 +37,16 @@ model User {
   email                 String
   // One to many
   messages              Message[]
-  // One to One
-  customSettings        CustomSettings?
-}
-
-model CustomSettings {
-  // Settings     
-  id                    String              @id @default(auto()) @map("_id") @db.ObjectId
-  user                  User                @relation(fields: [userId], references: [id])
-  userId                String              @db.ObjectId @unique
-  // One to many
+  // One to Many
   pingSettings          PingSettings[]
-}     
+}
 
 model PingSettings {      
   id                    String              @id @default(auto()) @map("_id") @db.ObjectId
-  customSettings        CustomSettings      @relation(fields: [customSettingsId], references: [id])
-  customSettingsId      String              @db.ObjectId
+  user                  User                @relation(fields: [userId], references: [discordId])
+  userId                String              @db.String
   gameName              String
   emote                 String
+
+  @@unique([userId, gameName])
 } 

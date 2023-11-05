@@ -89,21 +89,6 @@ class profileService implements Service {
     );
   }
 
-  public async getMemberProfileEmbed(
-    member: GuildMember
-  ): Promise<EmbedBuilder> {
-    const userDb = await UserDb.findOne({ userId: member.id });
-    member = this.getMemberProfile(member);
-    const embed = new EmbedBuilder()
-      .setThumbnail(member.avatar)
-      .setTitle(member.nickname);
-
-    // get number of messages sent by user
-    // check if exists
-    // if not exists, create
-    return embed;
-  }
-
   public getMemberProfile(member: GuildMember): GuildMember {
     member.nickname = member.nickname ? member.nickname : member.user.username;
     member.avatar = member.avatarURL()
@@ -114,12 +99,7 @@ class profileService implements Service {
     return member;
   }
 
-  async connectToOpGg() {
-    // check if exists
-    // connect to op.gg
-    // get user info
-    // update user
-  }
+
 
   async execute() {
     // count time in voice channel
