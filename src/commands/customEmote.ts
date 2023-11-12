@@ -52,50 +52,57 @@ export default class PingCommand implements Command {
         content: `You've rest your **${gameInfo.gameIcon} ${gameInfo.name}** emote to default: ${gameInfo.playerReaction}`,
       });
     }
+    const defaultEmotes = this.defaultEmotes(emote);
+    const customEmotes = this.customEmotes(emote);
 
-    const customEmotes = (str: string) => str.match(/<a?:.+?:\d{18,19}>/gu);
-    const defaultEmotes = (str: string) =>
-      str.match(/\p{Extended_Pictographic}/gu);
-    console.log(customEmotes(emote));
-    console.log(defaultEmotes(emote));
-    const defaultEmote = defaultEmotes(emote);
-    const customEmote = customEmotes(emote);
-
-    if (defaultEmote) {
-      this.updatePingSettings(defaultEmote[0], user.id, gameId);
+    console.log(emote, emote.length)
+    console.log(this.customEmotes(emote));
+    console.log(this.defaultEmotes(emote));
+    
+    // limit max count of emotes
+    if(defaultEmotes && defaultEmotes.length <= 6){
+      let emo = ""
+      defaultEmotes.map(e => emo += e)
+      await this.updatePingSettings(emo, user.id, gameId);
       return await interaction.reply({
         ephemeral: true,
-        content: `Your new emote for **${gameInfo.gameIcon} ${gameInfo.name}** is ${emote}`,
+        content: `Your new emote for **${gameInfo.gameIcon} ${gameInfo.name}** is ${emo}`,
       });
     }
 
-    if (!customEmote)
+    if(!customEmotes){
       return await interaction.reply({
         ephemeral: true,
-        content: `Couldn't figure out emote you provided ${customEmote}`,
+        content: `Couldn't figure out emote you provided ${emote}`,
       });
+    }
 
-    const customEmoteId = customEmote[0].match(/\d{18,19}/);
+    const customEmoteId = customEmotes[0].match(/\d{18,19}/);
 
-    if (!customEmoteId)
+    if(!customEmoteId){
       return await interaction.reply({
         ephemeral: true,
-        content: `Couldn't figure out id of emote you provided ${customEmoteId}`,
+        content: `Couldn't figure out id of emote you provided ${customEmotes[0]}`,
       });
-
-    console.log(customEmoteId[0])
+    }
+    // check if emote is form parent guild
     if (!(await interaction.guild?.emojis?.fetch())?.has(customEmoteId[0]))
       return await interaction.reply({
         ephemeral: true,
         content: "Emote you provided is't form this server :/",
       });
 
-    await this.updatePingSettings(customEmote[0], user.id, gameId);
+    // update to custom emote
+    await this.updatePingSettings(customEmotes[0], user.id, gameId);
     return await interaction.reply({
       ephemeral: true,
-      content: `Your new emote for **${gameInfo.gameIcon} ${gameInfo.name}** is ${emote}`,
+      content: `Your new emote for **${gameInfo.gameIcon} ${gameInfo.name}** is ${customEmotes[0]}`,
     });
   }
+
+  private customEmotes = (str: string) => str.match(/<a?:.+?:\d{18,19}>/gu);
+  private defaultEmotes = (str: string) =>
+    str.match(/\p{Extended_Pictographic}/gu);
 
   private updatePingSettings = async (
     emote: string,
