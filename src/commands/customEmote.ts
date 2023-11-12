@@ -40,7 +40,6 @@ export default class PingCommand implements Command {
     const gameInfo = (pingServiceCfg as any)[gameId];
     // if emote null = reset to default aka delete setting
     if (!emote) {
-      console.log("delete Emote");
       await prisma.pingSettings.deleteMany({
         where: {
           userId: user.id,
@@ -55,10 +54,6 @@ export default class PingCommand implements Command {
     const defaultEmotes = this.defaultEmotes(emote);
     const customEmotes = this.customEmotes(emote);
 
-    console.log(emote, emote.length)
-    console.log(this.customEmotes(emote));
-    console.log(this.defaultEmotes(emote));
-    
     // limit max count of emotes
     if(defaultEmotes && defaultEmotes.length <= 6){
       let emo = ""
@@ -67,6 +62,14 @@ export default class PingCommand implements Command {
       return await interaction.reply({
         ephemeral: true,
         content: `Your new emote for **${gameInfo.gameIcon} ${gameInfo.name}** is ${emo}`,
+      });
+    }
+
+    if(emote.length <= 4){
+      await this.updatePingSettings(emote, user.id, gameId);
+      return await interaction.reply({
+        ephemeral: true,
+        content: `Your new prefix for **${gameInfo.gameIcon} ${gameInfo.name}** is ${emote}`,
       });
     }
 
