@@ -11,7 +11,7 @@ jobs:
       matrix:
         node-version: [18.18.2]
     steps:
-      - name: Deploying to Contabo
+      - name: Deploying to RedFox
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -20,5 +20,6 @@ jobs:
           script: |
             cd discord/MementoBot &&
             git pull &&
+            npm i &&
             npx prisma db push &&
-            npm run build
+            npm run ci
